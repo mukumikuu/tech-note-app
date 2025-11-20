@@ -1,30 +1,55 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import "./App.css";
+import { useState, useEffect } from "react";
+import { io, Socket } from "socket.io-client";
+
+interface KernelResult {
+  result: unknown;
+  logs: string[];
+  error: string | null;
+}
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [code, setCode] = useState("// 2+2");
+  const [output, setOutput] = useState<KernelResult | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  useEffect(() => {
+    const s = io("http://localhost:3001");
+    setSocket(s);
+
+    s.on("connect", () => console.log("Connected to kernel"));
+    s.on("codeResult", (data: KernelResult) => setOutput(data));
+
+    return () => {
+      s.disconnect();
+    };
+  }, []);
+
+  const run = () => {
+    if (socket && socket.connected) {
+      socket.emit("runCode", code);
+    } else {
+      console.error("Socket not connected");
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div style={{ padding: 20 }}>
+      <h1>JavaScript Notebook</h1>
+      <textarea
+        value={code}
+        onChange={(e) => setCode(e.target.value)}
+        style={{ width: "100%", height: 150, fontFamily: "monospace" }}
+      />
+      <button onClick={run}>Run</button>
+
+      {output && (
+        <div style={{ marginTop: 20 }}>
+          {output.error && <pre style={{ color: "red" }}>{output.error}</pre>}
+          {output.logs.length > 0 && <pre>{output.logs.join("\n")}</pre>}
+          <pre>{String(output.result)}</pre>
+        </div>
+      )}
+    </div>
   );
 }
 
