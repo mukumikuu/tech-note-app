@@ -1,11 +1,5 @@
 import { fork, ChildProcess } from 'child_process';
-
-export interface KernelResult {
-  result: unknown;
-  logs: string[];
-  error: string | null;
-}
-
+import { KernelResult } from '../types/kernelResult.js';
 export class KernelManager {
   private kernel: ChildProcess | null = null;
 

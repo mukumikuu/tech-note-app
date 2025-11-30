@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
-
-interface KernelResult {
-  result: unknown;
-  logs: string[];
-  error: string | null;
-}
+import type { KernelResult } from "../types/kernelResult";
 
 function App() {
   const [code, setCode] = useState("// 2+2");
@@ -45,8 +40,7 @@ function App() {
       {output && (
         <div style={{ marginTop: 20 }}>
           {output.error && <pre style={{ color: "red" }}>{output.error}</pre>}
-          {output.logs.length > 0 && <pre>{output.logs.join("\n")}</pre>}
-          <pre>{String(output.result)}</pre>
+          {output.logs.length > 0 && <pre>{output.logs.join("")}</pre>}
         </div>
       )}
     </div>
