@@ -8,7 +8,7 @@ function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const s = io("http://localhost:3001");
+    const s = io("http://localhost:3030");
     setSocket(s);
 
     s.on("connect", () => console.log("Connected to kernel"));
