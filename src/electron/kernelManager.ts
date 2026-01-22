@@ -1,5 +1,6 @@
 import { fork, ChildProcess } from 'child_process';
 import { KernelResult } from '../types/kernelResult.js';
+
 export class KernelManager {
   private kernel: ChildProcess | null = null;
 
@@ -7,15 +8,15 @@ export class KernelManager {
 
   start() {
     if (this.kernel) return;
-
-    // Fork a new Node process for the kernel
+    console.log('kernel start');
     this.kernel = fork(this.kernelPath, [], {
-      stdio: ['pipe', 'pipe', 'pipe', 'ipc'], // enable IPC channel
+      stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
     });
   }
 
   stop() {
     if (this.kernel) {
+      console.log('stop');
       this.kernel.kill();
       this.kernel = null;
     }
@@ -31,7 +32,7 @@ export class KernelManager {
       };
 
       this.kernel!.on('message', listener);
-      this.kernel!.send(code); // send code to kernel process
+      this.kernel!.send(code);
     });
   }
 }
