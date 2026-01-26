@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { KernelManager } from './kernelManager.js';
+import { KernelManager } from '../backend/kernel/kernelManager.js';
 import { isDev } from './util.js';
 
 let mainWindow: BrowserWindow | null = null;
