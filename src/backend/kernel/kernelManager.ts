@@ -1,5 +1,5 @@
 import { fork, ChildProcess } from 'child_process';
-import { KernelResult } from '../types/kernelResult.js';
+import { KernelResult } from '../../shared/kernelResult.js';
 
 export class KernelManager {
   private kernel: ChildProcess | null = null;

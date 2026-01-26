@@ -25,5 +25,5 @@
     "noUncheckedSideEffectImports": true
   },
   "include": ["src"],
-  "exclude": ["src/electron"]
+  "exclude": ["src/electron","src/backend"]
 }

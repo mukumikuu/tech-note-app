@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
-import type { KernelResult } from "../types/kernelResult";
+import type { KernelResult } from "../../shared/kernelResult";
 
 function App() {
   const [code, setCode] = useState("// 2+2");

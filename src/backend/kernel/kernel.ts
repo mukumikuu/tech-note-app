@@ -1,6 +1,6 @@
 import { transform } from 'esbuild';
 import vm from 'vm';
-import { KernelResult } from '../types/kernelResult.js';
+import { KernelResult } from '../../shared/kernelResult.js';
 
 process.on('message', async (code: string) => {
   const logs: string[] = [];
