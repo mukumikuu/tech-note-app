@@ -6,7 +6,7 @@
   "endOfLine": "auto",
   "printWidth": 80,
   "singleQuote": true,
-  "jsxSingleQuote": false,
+  "jsxSingleQuote": true,
   "proseWrap": "preserve",
   "arrowParens": "always",
   "plugins": ["prettier-plugin-tailwindcss"],
