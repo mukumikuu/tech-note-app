@@ -39,7 +39,7 @@ const ExecuteCellButton = ({
       <Icon
         size={iconSize}
         color={iconColor}
-        className={`${iconClassname} ${status === 'running' ? 'animate-spin' : 'fill-[#3E74EA]'}`}
+        className={`${iconClassname} ${status === 'running' ? 'animate-spin' : 'fill-light-blue'}`}
       />
     </button>
   )
