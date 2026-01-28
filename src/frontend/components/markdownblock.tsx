@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Button from './button'
 import { Plus } from 'lucide-react'
-import dragger from '../ui/assets/dragger.svg'
+import dragger from '../ui/assets/picture/dragger.svg'
 
 const MarkdownBlock = () => {
   const [text, setText] = useState('Write something...')

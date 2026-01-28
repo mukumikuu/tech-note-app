@@ -2,7 +2,7 @@ import ExecuteCellButton from './executecellbutton'
 import { useState, useEffect } from 'react'
 import Button from './button'
 import { Copy, Ellipsis, Plus } from 'lucide-react'
-import dragger from '../ui/assets/dragger.svg'
+import dragger from '../ui/assets/picture/dragger.svg'
 import { io, Socket } from 'socket.io-client'
 import type { CellStatus } from '../types/cellstatus'
 import type { KernelResult } from '../../shared/kernelResult'
@@ -62,39 +62,39 @@ const CodeBlock = ({ blockIndex }: CodeBlockProps) => {
   }
 
   return (
-    <div className="flex w-full gap-2">
-      <div className="flex flex-col items-end">
+    <div className='flex w-full gap-2'>
+      <div className='flex flex-col items-end'>
         <ExecuteCellButton
           status={status}
-          iconColor="#3E74EA"
+          iconColor='#3E74EA'
           iconSize={16}
           onExecute={runCell}
         />
-        <div className="font-poppins text-[12px]">{`[${blockIndex}]`}</div>
-        <div className="flex flex-row">
-          <Button onClick={handlePlus} icon={Plus} variant="icon" />
-          <Button variant="icon" onClick={handleDrag}>
-            <img src={dragger} alt="||" className="h-5 w-5" />
+        <div className='font-poppins text-[12px]'>{`[${blockIndex}]`}</div>
+        <div className='flex flex-row'>
+          <Button onClick={handlePlus} icon={Plus} variant='icon' />
+          <Button variant='icon' onClick={handleDrag}>
+            <img src={dragger} alt='||' className='h-5 w-5' />
           </Button>
         </div>
       </div>
-      <div className="w-full">
-        <div className="flex flex-row items-center gap-4 bg-[#191E30]">
-          <div className="pl-6">JavaScript</div>
-          <Button onClick={handleCopy} icon={Copy} variant="icon" />
-          <Button onClick={handleEllipsis} icon={Ellipsis} variant="icon" />
+      <div className='w-full'>
+        <div className='flex flex-row items-center gap-4 bg-[#191E30]'>
+          <div className='pl-6'>JavaScript</div>
+          <Button onClick={handleCopy} icon={Copy} variant='icon' />
+          <Button onClick={handleEllipsis} icon={Ellipsis} variant='icon' />
         </div>
         <textarea
-          className="block field-sizing-content h-auto w-full bg-[#2C3142] pl-6 font-mono"
+          className='block field-sizing-content h-auto w-full bg-[#2C3142] pl-6 font-mono'
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
-        <div className="bg-[#2C3142] pt-2 pl-6 font-mono text-sm">
+        <div className='bg-[#2C3142] pt-2 pl-6 font-mono text-sm'>
           {output?.error && (
-            <div className="text-[#FF0000]">{output.error}</div>
+            <div className='text-[#FF0000]'>{output.error}</div>
           )}
           {output && !output.error && (
-            <div className="text-[#FFFFFF]">{output.logs.join('')}</div>
+            <div className='text-[#FFFFFF]'>{output.logs.join('')}</div>
           )}
         </div>
       </div>
