@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import React, { useState } from 'react'
+import '../ui/index.css'
 
 interface ButtonProps {
   children?: React.ReactNode
@@ -21,7 +22,7 @@ const Button: React.FC<ButtonProps> = ({
   className = '',
   icon: Icon,
   iconSize = 18,
-  iconColor = '#FFFFFF',
+  iconColor = 'var(--color-white)',
   iconClassname = '',
 }) => {
   const [showOutline, setShowOutline] = useState(false)
@@ -44,12 +45,12 @@ const Button: React.FC<ButtonProps> = ({
     full: 'rounded-full',
   }
   const variantClasses = {
-    default: 'w-full bg-[#191E30] border hover:brightness-125',
+    default: 'w-full bg-dark-blue border hover:brightness-125',
     icon: 'bg-transparent hover:brightness-125',
   }
   const outlineClass =
     variant === 'default' && showOutline
-      ? 'outline outline-2 outline-[#3E74EA] outline-offset-2'
+      ? 'outline outline-2 outline-light-blue outline-offset-2'
       : 'outline-none'
 
   const combinedClasses = [
