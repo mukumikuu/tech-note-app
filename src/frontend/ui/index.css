@@ -1,54 +1,43 @@
-@import "tailwindcss";
-
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  color-scheme: light dark;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@font-face {
+  font-family: 'Poppins';
+  src: url('src/frontend/ui/assets/fonts/Poppins-Light.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+@font-face {
+  font-family: 'Poppins';
+  src: url('src/frontend/ui/assets/fonts/Poppins-SemiBold.ttf')
+    format('truetype');
+  font-weight: 700;
+  font-style: normal;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+@font-face {
+  font-family: 'Poppins';
+  src: url('src/frontend/ui/assets/fonts/Poppins-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
 }
 
-button {
-  border: none;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
-  transition: border-color 0.25s;
+@import 'tailwindcss';
+
+@theme {
+  --color-white: #ffffff;
+  --color-grey: #454956;
+  --color-blue: #2c3142;
+  --color-dark-blue: #191e30;
+  --color-light-blue: #3e74ea;
+  --color-red: #ff0000;
+  --color-light-green: #00bd67;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+@theme {
+  --font-poppins: 'Poppins', sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-poppins);
   }
 }
