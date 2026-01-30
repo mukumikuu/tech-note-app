@@ -1,5 +1,6 @@
 import { Play, Loader2, Check, X } from 'lucide-react'
 import type { CellStatus } from '../types/cellstatus'
+import '../ui/index.css'
 interface ExecuteCellButtonProps {
   className?: string
   iconSize?: number
@@ -12,7 +13,7 @@ interface ExecuteCellButtonProps {
 const ExecuteCellButton = ({
   className = '',
   iconSize = 18,
-  iconColor = '#FFFFFF',
+  iconColor = 'var(--color-white)',
   iconClassname = '',
   status,
   onExecute,
@@ -39,7 +40,7 @@ const ExecuteCellButton = ({
       <Icon
         size={iconSize}
         color={iconColor}
-        className={`${iconClassname} ${status === 'running' ? 'animate-spin' : 'fill-[#3E74EA]'}`}
+        className={`${iconClassname} ${status === 'running' ? 'animate-spin' : 'fill-light-blue'}`}
       />
     </button>
   )

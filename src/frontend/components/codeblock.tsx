@@ -7,7 +7,7 @@ import { io, Socket } from 'socket.io-client'
 import type { CellStatus } from '../types/cellstatus'
 import type { KernelResult } from '../../shared/kernelResult'
 import { useCopyToClipboard } from '../hooks/usecopytoclipboard'
-import AddBlockMenu from './addblockmenu'
+import '../ui/index.css'
 
 type CodeBlockProps = {
   blockIndex: number
@@ -64,7 +64,7 @@ const CodeBlock = ({ blockIndex, onAdd }: CodeBlockProps) => {
       <div className='flex flex-col items-end'>
         <ExecuteCellButton
           status={status}
-          iconColor='#3E74EA'
+          iconColor='var(--color-light-blue)'
           iconSize={16}
           onExecute={runCell}
         />
@@ -88,16 +88,14 @@ const CodeBlock = ({ blockIndex, onAdd }: CodeBlockProps) => {
           <Button onClick={handleEllipsis} icon={Ellipsis} variant='icon' />
         </div>
         <textarea
-          className='block field-sizing-content h-auto w-full bg-[#2C3142] pl-6 font-mono'
+          className='bg-blue block field-sizing-content h-auto w-full pl-6 font-mono text-white'
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
-        <div className='bg-[#2C3142] pt-2 pl-6 font-mono text-sm'>
-          {output?.error && (
-            <div className='text-[#FF0000]'>{output.error}</div>
-          )}
+        <div className='bg-blue pt-2 pl-6 font-mono text-sm text-white'>
+          {output?.error && <div className='text-red'>{output.error}</div>}
           {output && !output.error && (
-            <div className='text-[#FFFFFF]'>{output.logs.join('')}</div>
+            <div className='text-white'>{output.logs.join('')}</div>
           )}
         </div>
       </div>

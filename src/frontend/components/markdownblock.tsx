@@ -25,7 +25,7 @@ const MarkdownBlock = ({ onAdd }: MarkdownBlockProps) => {
       </div>
       <div className='w-full'>
         <textarea
-          className='block field-sizing-content h-auto w-full font-mono'
+          className='block field-sizing-content h-auto w-full font-mono text-white'
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
