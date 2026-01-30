@@ -1,26 +1,25 @@
 import { useState } from 'react'
 import Button from './button'
-import { Plus } from 'lucide-react'
 import dragger from '../ui/assets/picture/dragger.svg'
+import AddBlockMenu from './addblockmenu'
 
-const MarkdownBlock = () => {
+type MarkdownBlockProps = {
+  onAdd: (type: 'markdown' | 'code') => void
+}
+const MarkdownBlock = ({ onAdd }: MarkdownBlockProps) => {
   const [text, setText] = useState('Write something...')
 
   const handleDrag = () => {
     //TODO in allow reordtext block/markdown
   }
 
-  const handlePlus = () => {
-    //TODO in Create code block/markdown
-  }
-
   return (
-    <div className='flex w-full gap-2'>
-      <div className='flex flex-col items-end'>
-        <div className='flex flex-row'>
-          <Button onClick={handlePlus} icon={Plus} variant='icon' />
-          <Button variant='icon' onClick={handleDrag}>
-            <img src={dragger} alt='||' className='h-5 w-5' />
+    <div className='flex w-full items-center gap-2'>
+      <div className='flex flex-col'>
+        <div className='flex flex-row items-center'>
+          <AddBlockMenu onSelect={(type) => onAdd(type)}></AddBlockMenu>
+          <Button variant='icon' onClick={handleDrag} className='px-0'>
+            <img src={dragger} alt='||' className='h-8 w-8' />
           </Button>
         </div>
       </div>
