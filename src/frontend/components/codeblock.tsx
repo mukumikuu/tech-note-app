@@ -1,7 +1,7 @@
 import ExecuteCellButton from './executecellbutton'
 import { useState, useEffect } from 'react'
 import Button from './button'
-import { Copy, Ellipsis, Plus } from 'lucide-react'
+import { Copy, Ellipsis } from 'lucide-react'
 import dragger from '../ui/assets/picture/dragger.svg'
 import { io, Socket } from 'socket.io-client'
 import type { CellStatus } from '../types/cellstatus'
@@ -11,9 +11,10 @@ import '../ui/index.css'
 
 type CodeBlockProps = {
   blockIndex: number
+  onAdd: (type: 'markdown' | 'code') => void
 }
 
-const CodeBlock = ({ blockIndex }: CodeBlockProps) => {
+const CodeBlock = ({ blockIndex, onAdd }: CodeBlockProps) => {
   const [status, setStatus] = useState<CellStatus>('idle')
   const [code, setCode] = useState('Write something')
   const [output, setOutput] = useState<KernelResult | null>(null)
@@ -58,12 +59,8 @@ const CodeBlock = ({ blockIndex }: CodeBlockProps) => {
     //TODO in allow reorder code block/markdown
   }
 
-  const handlePlus = () => {
-    //TODO in Create code block/markdown
-  }
-
   return (
-    <div className='flex w-full gap-2'>
+    <div className='flex w-full items-center gap-2'>
       <div className='flex flex-col items-end'>
         <ExecuteCellButton
           status={status}
@@ -71,18 +68,23 @@ const CodeBlock = ({ blockIndex }: CodeBlockProps) => {
           iconSize={16}
           onExecute={runCell}
         />
-        <div className='font-Poppins text-[12px] text-white'>{`[${blockIndex}]`}</div>
-        <div className='flex flex-row'>
-          <Button onClick={handlePlus} icon={Plus} variant='icon' />
+        <div className='font-poppins text-[12px]'>{`[${blockIndex}]`}</div>
+        <div className='flex flex-row items-center'>
+          <AddBlockMenu onSelect={(type) => onAdd(type)}></AddBlockMenu>
           <Button variant='icon' onClick={handleDrag}>
-            <img src={dragger} alt='||' className='h-5 w-5' />
+            <img src={dragger} alt='||' className='h-8 w-8' />
           </Button>
         </div>
       </div>
       <div className='w-full'>
-        <div className='bg-dark-blue flex flex-row items-center gap-4'>
-          <div className='pl-6 text-white'>JavaScript</div>
-          <Button onClick={handleCopy} icon={Copy} variant='icon' />
+        <div className='flex flex-row items-center gap-4 bg-[#191E30]'>
+          <div className='pl-6'>JavaScript</div>
+          <Button
+            onClick={handleCopy}
+            icon={Copy}
+            variant='icon'
+            className='px-0'
+          />
           <Button onClick={handleEllipsis} icon={Ellipsis} variant='icon' />
         </div>
         <textarea
