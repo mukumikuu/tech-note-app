@@ -1,11 +1,12 @@
-import type { LucideIcon } from "lucide-react"
-import React, { useState } from "react"
+import type { LucideIcon } from 'lucide-react'
+import React, { useState } from 'react'
+import '../ui/index.css'
 
 interface ButtonProps {
   children?: React.ReactNode
   onClick: () => void
-  variant?: "default" | "icon"
-  rounded?: "lg" | "sm" | "full"
+  variant?: 'default' | 'icon'
+  rounded?: 'lg' | 'sm' | 'full'
   className?: string
   icon?: LucideIcon
   iconSize?: number
@@ -16,18 +17,18 @@ interface ButtonProps {
 const Button: React.FC<ButtonProps> = ({
   children,
   onClick,
-  variant = "default",
-  rounded = "full",
-  className = "",
+  variant = 'default',
+  rounded = 'full',
+  className = '',
   icon: Icon,
   iconSize = 18,
-  iconColor = "#FFFFFF",
-  iconClassname = "",
+  iconColor = 'var(--color-white)',
+  iconClassname = '',
 }) => {
   const [showOutline, setShowOutline] = useState(false)
 
   const handleClick = () => {
-    if (variant === "default") {
+    if (variant === 'default') {
       setShowOutline(true)
       setTimeout(() => setShowOutline(false), 300)
     }
@@ -36,21 +37,21 @@ const Button: React.FC<ButtonProps> = ({
   }
 
   const baseClasses =
-    "flex items-center justify-center gap-2 py-2 px-4 cursor-pointer transition-all duration-300 ease-in-out"
+    'flex items-center justify-center gap-2 py-2 px-4 font-Poppins text-white cursor-pointer transition-all duration-300 ease-in-out'
 
   const roundedClasses = {
-    sm: "rounded-sm",
-    lg: "rounded-lg",
-    full: "rounded-full",
+    sm: 'rounded-sm',
+    lg: 'rounded-lg',
+    full: 'rounded-full',
   }
   const variantClasses = {
-    default: "w-full bg-[#191E30] border hover:brightness-125",
-    icon: "bg-transparent hover:brightness-125",
+    default: 'w-full bg-dark-blue border hover:brightness-125',
+    icon: 'bg-transparent hover:brightness-125',
   }
   const outlineClass =
-    variant === "default" && showOutline
-      ? "outline outline-2 outline-[#3E74EA] outline-offset-2"
-      : "outline-none"
+    variant === 'default' && showOutline
+      ? 'outline outline-2 outline-light-blue outline-offset-2'
+      : 'outline-none'
 
   const combinedClasses = [
     baseClasses,
@@ -58,7 +59,7 @@ const Button: React.FC<ButtonProps> = ({
     variantClasses[variant],
     className,
     outlineClass,
-  ].join(" ")
+  ].join(' ')
 
   return (
     <button className={combinedClasses} onClick={handleClick}>

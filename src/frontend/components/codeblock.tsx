@@ -7,6 +7,7 @@ import { io, Socket } from 'socket.io-client'
 import type { CellStatus } from '../types/cellstatus'
 import type { KernelResult } from '../../shared/kernelResult'
 import { useCopyToClipboard } from '../hooks/usecopytoclipboard'
+import '../ui/index.css'
 
 type CodeBlockProps = {
   blockIndex: number
@@ -66,11 +67,11 @@ const CodeBlock = ({ blockIndex }: CodeBlockProps) => {
       <div className='flex flex-col items-end'>
         <ExecuteCellButton
           status={status}
-          iconColor='#3E74EA'
+          iconColor='var(--color-light-blue)'
           iconSize={16}
           onExecute={runCell}
         />
-        <div className='font-poppins text-[12px]'>{`[${blockIndex}]`}</div>
+        <div className='font-Poppins text-[12px] text-white'>{`[${blockIndex}]`}</div>
         <div className='flex flex-row'>
           <Button onClick={handlePlus} icon={Plus} variant='icon' />
           <Button variant='icon' onClick={handleDrag}>
@@ -79,22 +80,20 @@ const CodeBlock = ({ blockIndex }: CodeBlockProps) => {
         </div>
       </div>
       <div className='w-full'>
-        <div className='flex flex-row items-center gap-4 bg-[#191E30]'>
-          <div className='pl-6'>JavaScript</div>
+        <div className='bg-dark-blue flex flex-row items-center gap-4'>
+          <div className='pl-6 text-white'>JavaScript</div>
           <Button onClick={handleCopy} icon={Copy} variant='icon' />
           <Button onClick={handleEllipsis} icon={Ellipsis} variant='icon' />
         </div>
         <textarea
-          className='block field-sizing-content h-auto w-full bg-[#2C3142] pl-6 font-mono'
+          className='bg-blue block field-sizing-content h-auto w-full pl-6 font-mono text-white'
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
-        <div className='bg-[#2C3142] pt-2 pl-6 font-mono text-sm'>
-          {output?.error && (
-            <div className='text-[#FF0000]'>{output.error}</div>
-          )}
+        <div className='bg-blue pt-2 pl-6 font-mono text-sm text-white'>
+          {output?.error && <div className='text-red'>{output.error}</div>}
           {output && !output.error && (
-            <div className='text-[#FFFFFF]'>{output.logs.join('')}</div>
+            <div className='text-white'>{output.logs.join('')}</div>
           )}
         </div>
       </div>
