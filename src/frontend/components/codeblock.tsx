@@ -7,6 +7,7 @@ import { io, Socket } from 'socket.io-client'
 import type { CellStatus } from '../types/cellstatus'
 import type { KernelResult } from '../../shared/kernelResult'
 import { useCopyToClipboard } from '../hooks/usecopytoclipboard'
+import AddBlockMenu from './addblockmenu'
 import '../ui/index.css'
 
 type CodeBlockProps = {
@@ -61,18 +62,18 @@ const CodeBlock = ({ blockIndex, onAdd }: CodeBlockProps) => {
 
   return (
     <div className='flex w-full items-center gap-2'>
-      <div className='flex flex-col items-end'>
+      <div className='flex flex-col items-end gap-y-1'>
         <ExecuteCellButton
           status={status}
           iconColor='var(--color-light-blue)'
           iconSize={16}
           onExecute={runCell}
         />
-        <div className='font-poppins text-[12px]'>{`[${blockIndex}]`}</div>
+        <div className='font-poppins text-[12px] text-white'>{`[${blockIndex}]`}</div>
         <div className='flex flex-row items-center'>
           <AddBlockMenu onSelect={(type) => onAdd(type)}></AddBlockMenu>
           <Button variant='icon' onClick={handleDrag}>
-            <img src={dragger} alt='||' className='h-8 w-8' />
+            <img src={dragger} alt='||' className='h-5 w-5' />
           </Button>
         </div>
       </div>

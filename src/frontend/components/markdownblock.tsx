@@ -18,8 +18,8 @@ const MarkdownBlock = ({ onAdd }: MarkdownBlockProps) => {
       <div className='flex flex-col'>
         <div className='flex flex-row items-center'>
           <AddBlockMenu onSelect={(type) => onAdd(type)}></AddBlockMenu>
-          <Button variant='icon' onClick={handleDrag} className='px-0'>
-            <img src={dragger} alt='||' className='h-8 w-8' />
+          <Button variant='icon' onClick={handleDrag}>
+            <img src={dragger} alt='||' className='h-5 w-5' />
           </Button>
         </div>
       </div>

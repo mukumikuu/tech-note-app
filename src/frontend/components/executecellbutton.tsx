@@ -28,7 +28,7 @@ const ExecuteCellButton = ({
   const Icon = iconMap[status]
 
   const baseClasses =
-    'flex items-center justify-center gap-2 py-2 px-4 cursor-pointer transition-all duration-300 ease-in-out hover:brightness-125'
+    'flex items-center justify-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:brightness-125'
 
   const combinedClasses = className + baseClasses
   return (

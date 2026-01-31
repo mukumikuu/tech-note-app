@@ -37,7 +37,7 @@ const Button: React.FC<ButtonProps> = ({
   }
 
   const baseClasses =
-    'flex items-center justify-center gap-2 py-2 px-4 font-Poppins text-white cursor-pointer transition-all duration-300 ease-in-out'
+    'flex items-center justify-center gap-2 font-Poppins text-white cursor-pointer transition-all duration-300 ease-in-out'
 
   const roundedClasses = {
     sm: 'rounded-sm',
@@ -45,7 +45,7 @@ const Button: React.FC<ButtonProps> = ({
     full: 'rounded-full',
   }
   const variantClasses = {
-    default: 'w-full bg-dark-blue border hover:brightness-125',
+    default: 'w-full bg-dark-blue border py-2 px-4 hover:brightness-125',
     icon: 'bg-transparent hover:brightness-125',
   }
   const outlineClass =
