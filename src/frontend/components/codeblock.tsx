@@ -2,20 +2,23 @@ import ExecuteCellButton from './executecellbutton'
 import { useState, useEffect } from 'react'
 import Button from './button'
 import { Copy, Ellipsis } from 'lucide-react'
-import dragger from '../ui/assets/picture/dragger.svg'
 import { io, Socket } from 'socket.io-client'
 import type { CellStatus } from '../types/cellstatus'
 import type { KernelResult } from '../../shared/kernelResult'
 import { useCopyToClipboard } from '../hooks/usecopytoclipboard'
 import AddBlockMenu from './addblockmenu'
 import '../ui/index.css'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import DragButton from './dragbutton'
 
 type CodeBlockProps = {
+  id: string
   blockIndex: number
   onAdd: (type: 'markdown' | 'code') => void
 }
 
-const CodeBlock = ({ blockIndex, onAdd }: CodeBlockProps) => {
+const CodeBlock = ({ id, blockIndex, onAdd }: CodeBlockProps) => {
   const [status, setStatus] = useState<CellStatus>('idle')
   const [code, setCode] = useState('Write something')
   const [output, setOutput] = useState<KernelResult | null>(null)
@@ -55,49 +58,73 @@ const CodeBlock = ({ blockIndex, onAdd }: CodeBlockProps) => {
   const handleEllipsis = () => {
     //TODO show modal menu for deletion is blocked by modal
   }
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+    setActivatorNodeRef,
+  } = useSortable({ id })
 
-  const handleDrag = () => {
-    //TODO in allow reorder code block/markdown
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
   }
 
   return (
-    <div className='flex w-full items-center gap-2'>
-      <div className='flex flex-col items-end gap-y-1'>
-        <ExecuteCellButton
-          status={status}
-          iconColor='var(--color-light-blue)'
-          iconSize={16}
-          onExecute={runCell}
-        />
-        <div className='font-poppins text-[12px] text-white'>{`[${blockIndex}]`}</div>
-        <div className='flex flex-row items-center'>
-          <AddBlockMenu onSelect={(type) => onAdd(type)}></AddBlockMenu>
-          <Button variant='icon' onClick={handleDrag}>
-            <img src={dragger} alt='||' className='h-5 w-5' />
-          </Button>
-        </div>
-      </div>
-      <div className='w-full'>
-        <div className='flex flex-row items-center gap-4 bg-[#191E30]'>
-          <div className='pl-6'>JavaScript</div>
-          <Button
-            onClick={handleCopy}
-            icon={Copy}
-            variant='icon'
-            className='px-0'
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex w-full gap-2 ${
+        isDragging ? 'opacity-0' : 'opacity-100'
+      }`}
+    >
+      <div className='flex w-full items-center gap-2'>
+        <div className='flex flex-col items-end gap-y-1'>
+          <ExecuteCellButton
+            status={status}
+            iconColor='var(--color-light-blue)'
+            iconSize={16}
+            onExecute={runCell}
           />
-          <Button onClick={handleEllipsis} icon={Ellipsis} variant='icon' />
+          <div className='font-poppins text-[12px] text-white'>{`[${blockIndex}]`}</div>
+          <div className='flex flex-row items-center'>
+            <AddBlockMenu onSelect={(type) => onAdd(type)}></AddBlockMenu>
+            <DragButton
+              ref={setActivatorNodeRef}
+              {...attributes}
+              {...listeners}
+            ></DragButton>
+          </div>
         </div>
-        <textarea
-          className='bg-blue block field-sizing-content h-auto w-full pl-6 font-mono text-white'
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-        />
-        <div className='bg-blue pt-2 pl-6 font-mono text-sm text-white'>
-          {output?.error && <div className='text-red'>{output.error}</div>}
-          {output && !output.error && (
-            <div className='text-white'>{output.logs.join('')}</div>
-          )}
+        <div className='w-full'>
+          <div
+            className='flex flex-row items-center gap-4 bg-[#191E30]'
+            style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+          >
+            <div className='pl-6'>JavaScript</div>
+            <Button
+              onClick={handleCopy}
+              icon={Copy}
+              variant='icon'
+              className='px-0'
+            />
+            <Button onClick={handleEllipsis} icon={Ellipsis} variant='icon' />
+          </div>
+          <textarea
+            className='bg-blue block field-sizing-content h-auto w-full pl-6 font-mono text-white'
+            style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+          <div className='bg-blue pt-2 pl-6 font-mono text-sm text-white'>
+            {output?.error && <div className='text-red'>{output.error}</div>}
+            {output && !output.error && (
+              <div className='text-white'>{output.logs.join('')}</div>
+            )}
+          </div>
         </div>
       </div>
     </div>

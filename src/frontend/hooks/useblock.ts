@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { arrayMove } from '@dnd-kit/sortable'
 import Block from '../types/block'
 import type { blockType } from '../types/block'
 export const useBlocks = () => {
@@ -21,9 +22,20 @@ export const useBlocks = () => {
     setBlocks((prev) => prev.filter((_, i) => i !== index))
   }
 
+  const reorderBlocks = (activeId: string, overId: string) => {
+    if (activeId === overId) return
+    const oldIndex = blocks.findIndex((b) => b.id === activeId)
+    const newIndex = blocks.findIndex((b) => b.id === overId)
+    setBlocks((blocks) => {
+      return arrayMove(blocks, oldIndex, newIndex)
+    })
+  }
+
   return {
     blocks,
+    setBlocks,
     addBlockAfter,
     removeBlock,
+    reorderBlocks,
   }
 }
