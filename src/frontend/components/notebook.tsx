@@ -12,7 +12,7 @@ import {
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useState } from 'react'
 const Notebook = () => {
-  const { blocks, addBlockAfter, reorderBlocks } = useBlocks()
+  const { blocks, addBlockAfter, reorderBlocks, removeBlock } = useBlocks()
   const [activeId, setActiveId] = useState<string | null>(null)
 
   function onDragStart(event: DragStartEvent) {
@@ -42,6 +42,7 @@ const Notebook = () => {
                 key={block.id}
                 id={block.id}
                 onAdd={(type) => addBlockAfter(index, type)}
+                onRemove={() => removeBlock(block.id)}
               />
             ) : (
               <CodeBlock
@@ -49,6 +50,7 @@ const Notebook = () => {
                 id={block.id}
                 blockIndex={index}
                 onAdd={(type) => addBlockAfter(index, type)}
+                onRemove={() => removeBlock(block.id)}
               />
             )
           )}
@@ -57,9 +59,18 @@ const Notebook = () => {
       <DragOverlay>
         {activeBlock ? (
           activeBlock.type === 'markdown' ? (
-            <MarkdownBlock id={activeBlock.id} onAdd={() => {}} />
+            <MarkdownBlock
+              id={activeBlock.id}
+              onAdd={() => {}}
+              onRemove={() => {}}
+            />
           ) : (
-            <CodeBlock id={activeBlock.id} blockIndex={0} onAdd={() => {}} />
+            <CodeBlock
+              id={activeBlock.id}
+              blockIndex={0}
+              onAdd={() => {}}
+              onRemove={() => {}}
+            />
           )
         ) : null}
       </DragOverlay>

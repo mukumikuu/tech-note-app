@@ -12,11 +12,13 @@ interface ButtonProps {
   iconSize?: number
   iconColor?: string
   iconClassname?: string
+  onMouseDown?: React.MouseEventHandler<HTMLButtonElement>
 }
 
 const Button: React.FC<ButtonProps> = ({
   children,
   onClick,
+  onMouseDown,
   variant = 'default',
   rounded = 'full',
   className = '',
@@ -62,7 +64,11 @@ const Button: React.FC<ButtonProps> = ({
   ].join(' ')
 
   return (
-    <button className={combinedClasses} onClick={handleClick}>
+    <button
+      className={combinedClasses}
+      onMouseDown={onMouseDown}
+      onClick={handleClick}
+    >
       {Icon && (
         <Icon size={iconSize} color={iconColor} className={iconClassname} />
       )}

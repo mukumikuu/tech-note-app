@@ -1,7 +1,7 @@
 import ExecuteCellButton from './executecellbutton'
 import { useState, useEffect } from 'react'
 import Button from './button'
-import { Copy, Ellipsis } from 'lucide-react'
+import { Copy, Trash } from 'lucide-react'
 import { io, Socket } from 'socket.io-client'
 import type { CellStatus } from '../types/cellstatus'
 import type { KernelResult } from '../../shared/kernelResult'
@@ -16,9 +16,10 @@ type CodeBlockProps = {
   id: string
   blockIndex: number
   onAdd: (type: 'markdown' | 'code') => void
+  onRemove: () => void
 }
 
-const CodeBlock = ({ id, blockIndex, onAdd }: CodeBlockProps) => {
+const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
   const [status, setStatus] = useState<CellStatus>('idle')
   const [code, setCode] = useState('Write something')
   const [output, setOutput] = useState<KernelResult | null>(null)
@@ -55,9 +56,11 @@ const CodeBlock = ({ id, blockIndex, onAdd }: CodeBlockProps) => {
     if (!copied) console.log('copy failed')
   }
 
-  const handleEllipsis = () => {
-    //TODO show modal menu for deletion is blocked by modal
+  const handleRemove = () => {
+    onRemove()
+    console.log(`${id} is removed`)
   }
+
   const {
     attributes,
     listeners,
@@ -109,9 +112,8 @@ const CodeBlock = ({ id, blockIndex, onAdd }: CodeBlockProps) => {
               onClick={handleCopy}
               icon={Copy}
               variant='icon'
-              className='px-0'
             />
-            <Button onClick={handleEllipsis} icon={Ellipsis} variant='icon' />
+            <Button onClick={handleRemove} icon={Trash} variant='icon' />
           </div>
           <textarea
             className='bg-blue block field-sizing-content h-auto w-full pl-6 font-mono text-white'

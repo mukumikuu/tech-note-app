@@ -18,8 +18,8 @@ export const useBlocks = () => {
     })
   }
 
-  const removeBlock = (index: number) => {
-    setBlocks((prev) => prev.filter((_, i) => i !== index))
+  const removeBlock = (id: string) => {
+    setBlocks((prev) => prev.filter((b) => b.id !== id))
   }
 
   const reorderBlocks = (activeId: string, overId: string) => {
