@@ -1,7 +1,7 @@
 'use client'
 import {
   DndContext,
-  rectIntersection,
+  closestCenter,
   DragOverlay,
   type DragStartEvent,
   type DragEndEvent,
@@ -12,8 +12,10 @@ import OptionBar from './optionbar'
 import SideBarElement from './sidebarelement'
 import SortableSidebarElement from './sortablesidebarelement'
 import { useFolders } from '../hooks/usefolder'
+import TrashDropZone from './trashbar'
 const Sidebar = () => {
-  const { folders, setFolders, addFolder, reorderFolders } = useFolders()
+  const { folders, setFolders, addFolder, reorderFolders, removeFolder } =
+    useFolders()
   const [activeId, setActiveId] = useState<string | null>(null)
 
   const isFolderOpened = folders.length > 0
@@ -25,14 +27,24 @@ const Sidebar = () => {
   function onDragEnd(event: DragEndEvent) {
     const { active, over } = event
     if (!over) return
+    if (over.id === 'drop-zone') {
+      removeFolder(active.id as string)
+      setActiveId(null)
+      return
+    }
     if (active.id === over!.id) return
     reorderFolders(active.id as string, over!.id as string)
+    setActiveId(null)
+  }
+
+  function onDragCancel() {
+    setActiveId(null)
   }
 
   const activeFolder = folders.find((f) => f.id === activeId)
 
   return (
-    <div className='bg-blue h-screen w-1/4 px-2 py-2'>
+    <div className='bg-blue flex h-screen w-1/4 flex-col px-2 py-2'>
       <OptionBar onAdd={() => addFolder(0, 'untitled')}></OptionBar>
       {!isFolderOpened && (
         <div className='font-poppins pt-2 text-center text-sm text-white'>
@@ -40,14 +52,15 @@ const Sidebar = () => {
         </div>
       )}
       {isFolderOpened && (
-        <div>
+        <>
           <div className='font-poppins gap-2 pt-2 pb-2 text-left text-sm text-white'>
             FOLDERS
           </div>
           <DndContext
-            collisionDetection={rectIntersection}
+            collisionDetection={closestCenter}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
+            onDragCancel={onDragCancel}
           >
             <SortableContext
               items={folders.map((f) => f.id)}
@@ -70,6 +83,7 @@ const Sidebar = () => {
                 ))}
               </div>
             </SortableContext>
+            <TrashDropZone></TrashDropZone>
             <DragOverlay>
               {activeFolder ? (
                 <SideBarElement
@@ -80,7 +94,7 @@ const Sidebar = () => {
               ) : null}
             </DragOverlay>
           </DndContext>
-        </div>
+        </>
       )}
     </div>
   )
