@@ -41,3 +41,7 @@
     font-family: var(--font-poppins);
   }
 }
+
+:root {
+  background-color: #454956;
+}

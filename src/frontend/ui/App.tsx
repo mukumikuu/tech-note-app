@@ -6,7 +6,6 @@ function App() {
     <div className='flex w-full flex-row'>
       <Sidebar></Sidebar>
       <div className='flex w-full flex-col px-4'>
-        <h1>JavaScript Notebook</h1>
         <Notebook></Notebook>
       </div>
     </div>

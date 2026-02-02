@@ -107,12 +107,8 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
             className='flex flex-row items-center gap-4 bg-[#191E30]'
             style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
           >
-            <div className='pl-6'>JavaScript</div>
-            <Button
-              onClick={handleCopy}
-              icon={Copy}
-              variant='icon'
-            />
+            <div className='font-poppins pl-6 text-white'>JavaScript</div>
+            <Button onClick={handleCopy} icon={Copy} variant='icon' />
             <Button onClick={handleRemove} icon={Trash} variant='icon' />
           </div>
           <textarea
