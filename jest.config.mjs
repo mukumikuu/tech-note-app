@@ -1,5 +1,3 @@
-import { transform } from 'typescript'
-
 export default {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/test/setuptest.ts'],
