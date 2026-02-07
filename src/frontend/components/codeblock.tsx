@@ -21,7 +21,7 @@ type CodeBlockProps = {
 
 const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
   const [status, setStatus] = useState<CellStatus>('idle')
-  const [code, setCode] = useState('Write something')
+  const [code, setCode] = useState('Write something...')
   const [output, setOutput] = useState<KernelResult | null>(null)
   const [socket, setSocket] = useState<Socket | null>(null)
   const { copy, copied } = useCopyToClipboard()
@@ -78,6 +78,7 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
 
   return (
     <div
+      data-testid='codeblock'
       ref={setNodeRef}
       style={style}
       className={`flex w-full gap-2 ${
@@ -108,8 +109,18 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
             style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
           >
             <div className='font-poppins pl-6 text-white'>JavaScript</div>
-            <Button onClick={handleCopy} icon={Copy} variant='icon' />
-            <Button onClick={handleRemove} icon={Trash} variant='icon' />
+            <Button
+              data-testid='copy'
+              onClick={handleCopy}
+              icon={Copy}
+              variant='icon'
+            />
+            <Button
+              data-testid='remove'
+              onClick={handleRemove}
+              icon={Trash}
+              variant='icon'
+            />
           </div>
           <textarea
             className='bg-blue block field-sizing-content h-auto w-full pl-6 font-mono text-white'

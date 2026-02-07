@@ -33,6 +33,7 @@ const ExecuteCellButton = ({
   const combinedClasses = className + baseClasses
   return (
     <button
+      data-testid='executecellbutton'
       onClick={onExecute}
       disabled={status === 'running'}
       className={combinedClasses}

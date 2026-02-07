@@ -44,6 +44,7 @@ const MarkdownBlock = ({ id, onAdd, onRemove }: MarkdownBlockProps) => {
 
   return (
     <div
+      data-testid='markdownblock'
       ref={setNodeRef}
       style={style}
       className={`flex w-full gap-2 ${
@@ -65,6 +66,7 @@ const MarkdownBlock = ({ id, onAdd, onRemove }: MarkdownBlockProps) => {
           {focused && (
             <div className='absolute top-0 right-0.5 flex flex-row items-center'>
               <Button
+                data-testid='copy'
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={handleCopy}
                 icon={Copy}
@@ -72,6 +74,7 @@ const MarkdownBlock = ({ id, onAdd, onRemove }: MarkdownBlockProps) => {
                 variant='icon'
               />
               <Button
+                data-testid='remove'
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={handleRemove}
                 icon={Trash}
