@@ -2,7 +2,7 @@ import type { LucideIcon } from 'lucide-react'
 import React, { useState } from 'react'
 import '../ui/index.css'
 
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode
   onClick: () => void
   variant?: 'default' | 'icon'
@@ -26,6 +26,7 @@ const Button: React.FC<ButtonProps> = ({
   iconSize = 18,
   iconColor = 'var(--color-white)',
   iconClassname = '',
+  ...rest
 }) => {
   const [showOutline, setShowOutline] = useState(false)
 
@@ -65,9 +66,11 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      data-testid='button'
       className={combinedClasses}
       onMouseDown={onMouseDown}
       onClick={handleClick}
+      {...rest}
     >
       {Icon && (
         <Icon size={iconSize} color={iconColor} className={iconClassname} />

@@ -20,6 +20,7 @@ const AddBlockMenu = ({
 
   return (
     <div
+      data-testid='addblockmenu'
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
       className='outlone-black border-black'
