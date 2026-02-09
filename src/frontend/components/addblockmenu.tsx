@@ -27,7 +27,7 @@ const AddBlockMenu = ({
     >
       <Button icon={Plus} variant='icon' iconSize={16} onClick={toggleMenu} />
       {open && (
-        <div className='absolute'>
+        <div className='absolute z-2'>
           <Button
             onClick={() => handleSelect('code')}
             variant='default'

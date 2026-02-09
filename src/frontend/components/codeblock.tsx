@@ -11,6 +11,11 @@ import '../ui/index.css'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import DragButton from './dragbutton'
+import { useRef } from 'react'
+import { basicSetup, EditorView } from 'codemirror'
+import { EditorState } from '@codemirror/state'
+import { javascript } from '@codemirror/lang-javascript'
+import { darkEditor } from '../features/syntaxhighlight/editortheme'
 
 type CodeBlockProps = {
   id: string
@@ -25,6 +30,22 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
   const [output, setOutput] = useState<KernelResult | null>(null)
   const [socket, setSocket] = useState<Socket | null>(null)
   const { copy, copied } = useCopyToClipboard()
+  const editorRef = useRef<HTMLDivElement | null>(null)
+  const viewRef = useRef<EditorView | null>(null)
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+    setActivatorNodeRef,
+  } = useSortable({ id })
+
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+  }
 
   useEffect(() => {
     const s = io('http://localhost:3030')
@@ -35,6 +56,34 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
       s.disconnect()
     }
   }, [])
+
+  useEffect(() => {
+    if (!editorRef.current) return
+    const startState = EditorState.create({
+      doc: code,
+      extensions: [
+        basicSetup,
+        javascript(),
+        darkEditor,
+        EditorView.updateListener.of((update) => {
+          if (update.docChanged) {
+            setCode(update.state.doc.toString())
+          }
+        }),
+        EditorView.editable.of(!isDragging),
+      ],
+    })
+    const view = new EditorView({
+      state: startState,
+      parent: editorRef.current,
+    })
+    viewRef.current = view
+    return () => {
+      view.destroy()
+      viewRef.current = null
+    }
+  }, [])
+
   const runCell = () => {
     if (!socket || !socket.connected) {
       console.error('Socket not connected')
@@ -59,21 +108,6 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
   const handleRemove = () => {
     onRemove()
     console.log(`${id} is removed`)
-  }
-
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-    setActivatorNodeRef,
-  } = useSortable({ id })
-
-  const style = {
-    transition,
-    transform: CSS.Transform.toString(transform),
   }
 
   return (
@@ -122,11 +156,11 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
               variant='icon'
             />
           </div>
-          <textarea
-            className='bg-blue block field-sizing-content h-auto w-full pl-6 font-mono text-white'
+          <div
+            data-testid='editor'
+            ref={editorRef}
+            className='bg-blue w-full font-mono text-white'
             style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
           />
           <div className='bg-blue pt-2 pl-6 font-mono text-sm text-white'>
             {output?.error && <div className='text-red'>{output.error}</div>}
