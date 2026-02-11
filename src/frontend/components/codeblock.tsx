@@ -14,8 +14,14 @@ import DragButton from './dragbutton'
 import { useRef } from 'react'
 import { basicSetup, EditorView } from 'codemirror'
 import { EditorState } from '@codemirror/state'
-import { javascript } from '@codemirror/lang-javascript'
-import { darkEditor } from '../features/syntaxhighlight/editortheme'
+import languageMap from '../features/syntaxhighlight/languagemap'
+import type { Language } from '../types/language'
+import { Compartment } from '@codemirror/state'
+import {
+  darkEditor,
+  darkEditorLegacy,
+} from '../features/syntaxhighlight/editortheme'
+import LanguageButton from './languagebutton'
 
 type CodeBlockProps = {
   id: string
@@ -25,6 +31,7 @@ type CodeBlockProps = {
 }
 
 const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
+  const [language, setLanguage] = useState<Language>('JavaScript')
   const [status, setStatus] = useState<CellStatus>('idle')
   const [code, setCode] = useState('Write something...')
   const [output, setOutput] = useState<KernelResult | null>(null)
@@ -46,6 +53,8 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
     transition,
     transform: CSS.Transform.toString(transform),
   }
+  const languageCompartment = useRef(new Compartment()).current
+  const highlightCompartment = useRef(new Compartment()).current
 
   useEffect(() => {
     const s = io('http://localhost:3030')
@@ -63,8 +72,10 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
       doc: code,
       extensions: [
         basicSetup,
-        javascript(),
-        darkEditor,
+        languageCompartment.of(languageMap[language]),
+        highlightCompartment.of(
+          language === 'Shell' ? darkEditorLegacy : darkEditor
+        ),
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             setCode(update.state.doc.toString())
@@ -83,6 +94,19 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
       viewRef.current = null
     }
   }, [])
+
+  useEffect(() => {
+    if (!viewRef.current) return
+    const isLegacy = language === 'Shell'
+    viewRef.current.dispatch({
+      effects: [
+        languageCompartment.reconfigure(languageMap[language]),
+        highlightCompartment.reconfigure(
+          isLegacy ? darkEditorLegacy : darkEditor
+        ),
+      ],
+    })
+  }, [language])
 
   const runCell = () => {
     if (!socket || !socket.connected) {
@@ -142,7 +166,10 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
             className='flex flex-row items-center gap-4 bg-[#191E30]'
             style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
           >
-            <div className='font-poppins pl-6 text-white'>JavaScript</div>
+            <LanguageButton
+              value={language}
+              onChange={setLanguage}
+            ></LanguageButton>
             <Button
               data-testid='copy'
               onClick={handleCopy}

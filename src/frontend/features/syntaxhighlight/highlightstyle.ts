@@ -17,3 +17,13 @@ export const darkHighlightStyle = HighlightStyle.define([
   { tag: t.standard(t.variableName), color: '#9cd6ff' },
   { tag: t.invalid, color: '#ff6b6b' },
 ])
+
+export const shellHighlight = HighlightStyle.define([
+  { tag: t.keyword, color: '#f78c6c' },
+  { tag: t.function(t.variableName), color: '#f78c6c' },
+  { tag: t.string, color: '#e0e6d8' },
+  { tag: t.number, color: '#e0e6d8' },
+  { tag: t.comment, color: '#7f8599', fontStyle: 'italic' },
+  { tag: t.operator, color: '#89ddff' },
+  { tag: t.variableName, color: '#ffe014' }, // shell commands
+])
