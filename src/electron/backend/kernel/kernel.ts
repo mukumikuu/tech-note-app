@@ -1,9 +1,7 @@
 import { transform } from 'esbuild'
 import vm from 'vm'
 import { KernelResult } from '../../../shared/kernelResult.js'
-console.log('hello')
 process.on('message', async (code: string) => {
-  console.log('hello')
   const logs: string[] = []
   const sandbox = {
     console: {
