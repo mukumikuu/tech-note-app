@@ -1,17 +1,15 @@
-import { fork, ChildProcess } from 'child_process'
 import { KernelResult } from '../../../shared/kernelResult.js'
+import { KernelProcess } from '../types/kernelprocess.js'
 
 export class KernelManager {
-  private kernel: ChildProcess | null = null
+  private kernel: KernelProcess | null = null
 
-  constructor(private kernelPath: string) {}
+  constructor(private createProcess: () => KernelProcess) {}
 
   start() {
     if (this.kernel) return
+    this.kernel = this.createProcess()
     console.log('kernel start')
-    this.kernel = fork(this.kernelPath, [], {
-      stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
-    })
   }
 
   stop() {

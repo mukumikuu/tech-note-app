@@ -15,7 +15,7 @@ import { useRef } from 'react'
 import { basicSetup, EditorView } from 'codemirror'
 import { EditorState } from '@codemirror/state'
 import languageMap from '../features/syntaxhighlight/languagemap'
-import type { Language } from '../types/language'
+import type { Language } from '../../shared/language'
 import { Compartment } from '@codemirror/state'
 import {
   darkEditor,

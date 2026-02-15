@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Button from './button'
 import DropDownCard from './dropdowncard'
-import type { Language } from '../types/language'
+import type { Language } from '../../shared/language'
 
 type LanguageButtonProps = {
   value: Language
