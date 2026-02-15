@@ -1,6 +1,7 @@
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import { KernelManager } from './kernel/kernelManager.js'
+import { KernelManager } from './kernel/kernelmanager.js'
+import createNodeKernelProcess from './services/kernelprocess.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import socketHandlers from './controllers/socketcontroller.js'
@@ -11,7 +12,7 @@ const serverStart = () => {
   const PORT = 3030
   // ---- START KERNEL CHILD PROCESS ----
   const kernelPath = path.join(__dirname, '/kernel/kernel.js')
-  const kernel = new KernelManager(kernelPath)
+  const kernel = new KernelManager(() => createNodeKernelProcess(kernelPath))
 
   const httpServer = createServer()
   const io = new Server(httpServer, {

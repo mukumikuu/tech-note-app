@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io'
-import { KernelManager } from '../kernel/kernelManager.js'
+import { KernelManager } from '../kernel/kernelmanager.js'
 
 const socketHandlers = (socket: Socket, kernel: KernelManager) => {
   socket.on('runCode', async (code: string) => {
