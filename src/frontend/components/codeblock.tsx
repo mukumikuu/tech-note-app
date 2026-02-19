@@ -14,6 +14,7 @@ import DragButton from './dragbutton'
 import { useRef } from 'react'
 import { basicSetup, EditorView } from 'codemirror'
 import { EditorState } from '@codemirror/state'
+import linterMap from '../features/linter/lintermap'
 import languageMap from '../features/syntaxhighlight/languagemap'
 import type { Language } from '../../shared/language'
 import { Compartment } from '@codemirror/state'
@@ -55,6 +56,7 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
   }
   const languageCompartment = useRef(new Compartment()).current
   const highlightCompartment = useRef(new Compartment()).current
+  const linterCompartment = useRef(new Compartment()).current
 
   useEffect(() => {
     const s = io('http://localhost:3030')
@@ -76,6 +78,7 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
         highlightCompartment.of(
           language === 'Shell' ? darkEditorLegacy : darkEditor
         ),
+        linterCompartment.of(linterMap[language]),
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             setCode(update.state.doc.toString())
@@ -104,6 +107,7 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
         highlightCompartment.reconfigure(
           isLegacy ? darkEditorLegacy : darkEditor
         ),
+        linterCompartment.reconfigure(linterMap[language]),
       ],
     })
   }, [language])
