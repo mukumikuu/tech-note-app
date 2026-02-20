@@ -48,7 +48,7 @@ const Button: React.FC<ButtonProps> = ({
     full: 'rounded-full',
   }
   const variantClasses = {
-    default: 'w-full bg-dark-blue border py-2 px-4 hover:brightness-125',
+    default: 'w-full bg-dark-blue py-2 px-4 hover:brightness-125',
     icon: 'bg-transparent hover:brightness-125',
   }
   const outlineClass =
