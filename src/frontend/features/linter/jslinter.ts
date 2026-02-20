@@ -29,13 +29,10 @@ const jsLinter = linter((view): Diagnostic[] => {
   addMatches(/([^=!])==([^=])/g, "Use '===' instead of '=='")
   addMatches(/!=([^=])/g, "Use '!==' instead of '!='")
 
-  // 3. console.log in production
-  addMatches(/\bconsole\.log\b/g, 'Remove console.log before production')
-
-  // 4. debugger statement
+  // 3. debugger statement
   addMatches(/\bdebugger\b/g, 'Remove debugger statement', 'error')
 
-  // 5. Missing semicolon
+  // 4. Missing semicolon
   const lines = text.split('\n')
   let position = 0
   for (const line of lines) {
@@ -57,7 +54,7 @@ const jsLinter = linter((view): Diagnostic[] => {
     position += line.length + 1
   }
 
-  // 6. Unused variable
+  // 5. Unused variable
   const variableRegex = /\b(let|const)\s+(\w+)/g
   for (const match of text.matchAll(variableRegex)) {
     const variableName = match[2]

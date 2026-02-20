@@ -48,8 +48,16 @@ describe('codeblock', () => {
     expect(screen.getByTestId('addblockmenu')).toBeInTheDocument()
     expect(screen.getByTestId('dragbutton')).toBeInTheDocument()
   })
-  it('C23-Verify code block text can be edited', async () => {
-    // Code Mirror already test this no need
+  it('C23-Verify code block text can be edited', () => {
+    setup()
+    const editor = screen.getByTestId('editor')
+    const content = editor.querySelector('.cm-content') as HTMLElement
+    const text = 'Una Yaha!@#$?'
+    fireEvent.input(content, {
+      target: { textContent: text },
+    })
+
+    expect(content.textContent).toContain(text)
   })
   it('C24-Verify code block content can be copied', () => {
     setup()
