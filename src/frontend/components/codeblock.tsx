@@ -92,6 +92,7 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
       parent: editorRef.current,
     })
     viewRef.current = view
+    editorRef.current.cmView = view
     return () => {
       view.destroy()
       viewRef.current = null
