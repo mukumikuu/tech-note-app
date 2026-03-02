@@ -12,8 +12,10 @@ import {
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useState } from 'react'
 import FileHeader from './fileheader'
+import { useKernels } from '../hooks/usekernel'
 const Notebook = () => {
   const { blocks, addBlockAfter, reorderBlocks, removeBlock } = useBlocks()
+  const { runBlock, output } = useKernels()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [label, setLabel] = useState('untitled')
 
@@ -58,6 +60,8 @@ const Notebook = () => {
                   blockIndex={index}
                   onAdd={(type) => addBlockAfter(index, type)}
                   onRemove={() => removeBlock(block.id)}
+                  onExecute={runBlock}
+                  output={output[block.id]}
                 />
               )
             )}
@@ -77,6 +81,7 @@ const Notebook = () => {
                 blockIndex={0}
                 onAdd={() => {}}
                 onRemove={() => {}}
+                onExecute={() => {}}
               />
             )
           ) : null}

@@ -1,4 +1,5 @@
 import { KernelResult } from '../../../shared/kernelResult.js'
+import { Language } from '../../../shared/language.js'
 import { KernelProcess } from '../types/kernelprocess.js'
 
 export class KernelManager {
@@ -20,17 +21,26 @@ export class KernelManager {
     }
   }
 
-  runCode(code: string): Promise<KernelResult> {
+  runCode({
+    id,
+    code,
+    language,
+  }: {
+    id: string
+    code: string
+    language: Language
+  }): Promise<KernelResult> {
     if (!this.kernel) throw new Error('Kernel not started')
 
     return new Promise((resolve) => {
       const listener = (msg: KernelResult) => {
+        if (msg.id !== id) return
         resolve(msg)
         this.kernel?.off('message', listener)
       }
 
       this.kernel!.on('message', listener)
-      this.kernel!.send(code)
+      this.kernel!.send({ id, code, language })
     })
   }
 }

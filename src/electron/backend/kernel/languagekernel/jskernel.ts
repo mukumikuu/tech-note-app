@@ -6,9 +6,12 @@ import { Executor } from '../../services/executor.js'
 export class JSKernel implements LanguageKernel {
   compiler = new TSCompiler()
   executor = new Executor()
-  async run(code: string): Promise<KernelResult> {
+  async run(id: string, code: string): Promise<KernelResult> {
     const compiledCode = await this.compiler.compile(code)
-    const { result, logs, error } = await this.executor.execute(compiledCode)
-    return { result, logs, error }
+    const { result, logs, error } = await this.executor.execute(
+      id,
+      compiledCode
+    )
+    return { id, result, logs, error }
   }
 }

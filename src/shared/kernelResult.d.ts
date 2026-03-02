@@ -1,5 +1,6 @@
 export interface KernelResult {
-  result: unknown;
-  logs: string[];
-  error: string | null;
+  id: string
+  result: unknown
+  logs: string[]
+  error: string | null
 }

@@ -3,7 +3,7 @@ import { CodeExecutor } from '../types/codeexecutor.js'
 import vm from 'vm'
 
 export class Executor implements CodeExecutor {
-  async execute(code: string): Promise<KernelResult> {
+  async execute(id:string, code: string): Promise<KernelResult> {
     const logs: string[] = []
     const sandbox = {
       console: {
@@ -15,6 +15,7 @@ export class Executor implements CodeExecutor {
       const script = new vm.Script(code)
       const result = script.runInContext(context, { timeout: 1000 })
       return {
+        id,
         result,
         logs,
         error: null,
@@ -22,6 +23,7 @@ export class Executor implements CodeExecutor {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err)
       return {
+        id,
         result: null,
         logs,
         error: message,
