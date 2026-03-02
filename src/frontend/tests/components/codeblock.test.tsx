@@ -1,5 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import CodeBlock from '../../components/codeblock'
+import type { EditorDiv } from '../../../test/types/editor'
 
 const mockCopy = jest.fn()
 jest.mock('../../hooks/usecopytoclipboard', () => ({
@@ -50,14 +51,31 @@ describe('codeblock', () => {
   })
   it('C23-Verify code block text can be edited', () => {
     setup()
-    const editor = screen.getByTestId('editor')
-    const content = editor.querySelector('.cm-content') as HTMLElement
+    const editor = screen.getByTestId('editor') as EditorDiv
+    expect(editor.cmView).toBeDefined()
+    const view = editor.cmView
     const text = 'Una Yaha!@#$?'
-    fireEvent.input(content, {
-      target: { textContent: text },
+    act(() => {
+      view.dispatch({
+        changes: {
+          from: 0,
+          to: view.state.doc.length,
+          insert: text,
+        },
+      })
     })
-
-    expect(content.textContent).toContain(text)
+    expect(view.state.doc.toString()).toContain(text)
+    const text2 = '123NandaOmai'
+    act(() => {
+      view.dispatch({
+        changes: {
+          from: 0,
+          to: view.state.doc.length,
+          insert: text2,
+        },
+      })
+    })
+    expect(view.state.doc.toString()).toContain(text2)
   })
   it('C24-Verify code block content can be copied', () => {
     setup()
