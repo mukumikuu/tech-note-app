@@ -2,7 +2,6 @@ import ExecuteCellButton from './executecellbutton'
 import { useState, useEffect } from 'react'
 import Button from './button'
 import { Copy, Trash } from 'lucide-react'
-import { io, Socket } from 'socket.io-client'
 import type { CellStatus } from '../types/cellstatus'
 import type { KernelResult } from '../../shared/kernelResult'
 import { useCopyToClipboard } from '../hooks/usecopytoclipboard'
@@ -29,14 +28,21 @@ type CodeBlockProps = {
   blockIndex: number
   onAdd: (type: 'markdown' | 'code') => void
   onRemove: () => void
+  onExecute: (id: string, code: string, language: Language) => void
+  output?: KernelResult
 }
 
-const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
+const CodeBlock = ({
+  id,
+  blockIndex,
+  onAdd,
+  onRemove,
+  onExecute,
+  output,
+}: CodeBlockProps) => {
   const [language, setLanguage] = useState<Language>('JavaScript')
   const [status, setStatus] = useState<CellStatus>('idle')
   const [code, setCode] = useState('Write something...')
-  const [output, setOutput] = useState<KernelResult | null>(null)
-  const [socket, setSocket] = useState<Socket | null>(null)
   const { copy, copied } = useCopyToClipboard()
   const editorRef = useRef<HTMLDivElement | null>(null)
   const viewRef = useRef<EditorView | null>(null)
@@ -57,16 +63,6 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
   const languageCompartment = useRef(new Compartment()).current
   const highlightCompartment = useRef(new Compartment()).current
   const linterCompartment = useRef(new Compartment()).current
-
-  useEffect(() => {
-    const s = io('http://localhost:3030')
-    setSocket(s)
-    s.on('connect', () => console.log('Connected to kernel'))
-    s.on('codeResult', (data: KernelResult) => setOutput(data))
-    return () => {
-      s.disconnect()
-    }
-  }, [])
 
   useEffect(() => {
     if (!editorRef.current) return
@@ -113,19 +109,24 @@ const CodeBlock = ({ id, blockIndex, onAdd, onRemove }: CodeBlockProps) => {
     })
   }, [language])
 
-  const runCell = () => {
-    if (!socket || !socket.connected) {
-      console.error('Socket not connected')
+  useEffect(() => {
+    if (!output) return
+    if (output.error) {
       setStatus('error')
-      return
+      setTimeout(() => setStatus('idle'), 300)
+    } else {
+      setStatus('idle')
     }
+  }, [output])
 
+  const runCell = () => {
     try {
       setStatus('running')
-      socket.emit('runCode', code)
+      onExecute(id, code, language)
       setTimeout(() => setStatus('idle'), 300)
     } catch {
       setStatus('error')
+      setTimeout(() => setStatus('idle'), 300)
     }
   }
 

@@ -1,7 +1,7 @@
 import { KernelResult } from '../../../shared/kernelResult.js'
 
 interface CodeExecutor {
-  execute(code: string): Promise<KernelResult>
+  execute(id:string, code: string): Promise<KernelResult>
 }
 
 export type { CodeExecutor }
