@@ -1,14 +1,23 @@
 import { useState } from 'react'
 import Button from './button'
 import { Play, RotateCcwIcon, Trash2 } from 'lucide-react'
+import Block from '../types/block'
 interface FileHeaderProps {
+  blocks: Block[]
   label: string
   onLabelChange?: (value: string) => void
-  onRunAll?: () => void
-  onRestart?: () => void
-  onClearOutput?: () => void
+  onRunAll: () => void
+  onRestart: () => void
+  onClearOutput: (blocks: Block[]) => void
 }
-const FileHeader = ({ label, onLabelChange, onRunAll }: FileHeaderProps) => {
+const FileHeader = ({
+  blocks,
+  label,
+  onLabelChange,
+  onRunAll,
+  onRestart,
+  onClearOutput,
+}: FileHeaderProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [text, setText] = useState(label)
 
@@ -16,12 +25,19 @@ const FileHeader = ({ label, onLabelChange, onRunAll }: FileHeaderProps) => {
     setIsEditing(false)
     onLabelChange?.(text)
   }
-  const handleOnClick = () => {
-    //TODO in sprint 3 code execution
+
+  const handleOnClear = () => {
+    onClearOutput(blocks)
+    console.log('clear output')
+  }
+
+  const handleRestart = () => {
+    onRestart()
+    console.log('restart kernel')
   }
 
   const handleRunAll = () => {
-    onRunAll?.()
+    onRunAll()
     console.log('run all')
   }
 
@@ -51,10 +67,10 @@ const FileHeader = ({ label, onLabelChange, onRunAll }: FileHeaderProps) => {
         <Button icon={Play} onClick={handleRunAll}>
           Run All
         </Button>
-        <Button icon={RotateCcwIcon} onClick={handleOnClick}>
+        <Button icon={RotateCcwIcon} onClick={handleRestart}>
           Restart
         </Button>
-        <Button icon={Trash2} onClick={handleOnClick}>
+        <Button icon={Trash2} onClick={handleOnClear}>
           Clear Output
         </Button>
       </div>

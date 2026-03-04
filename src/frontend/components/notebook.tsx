@@ -16,14 +16,14 @@ import { useKernels } from '../hooks/usekernel'
 const Notebook = () => {
   const { blocks, addBlockAfter, reorderBlocks, removeBlock, updateBlock } =
     useBlocks()
-  const { runBlock, output } = useKernels()
+  const { runBlock, restartKernel, clearOutput, output } = useKernels()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [label, setLabel] = useState('untitled')
 
   const runAll = async () => {
-    for (const block of blocks) {
-      if (block.type === 'code') {
-        await runBlock(block.id, block.value!, block.language!)
+    for (const b of blocks) {
+      if (b.type === 'code') {
+        await runBlock(b.id, b.value!, b.language!)
       }
     }
   }
@@ -44,9 +44,12 @@ const Notebook = () => {
   return (
     <div>
       <FileHeader
+        blocks={blocks}
         label={label}
         onLabelChange={setLabel}
         onRunAll={runAll}
+        onRestart={restartKernel}
+        onClearOutput={clearOutput}
       ></FileHeader>
       <DndContext
         collisionDetection={rectIntersection}

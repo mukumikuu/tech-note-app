@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Socket, io } from 'socket.io-client'
 import type { KernelResult } from '../../shared/kernelResult'
 import type { Language } from '../../shared/language'
+import Block from '../types/block'
 
 export function useKernels() {
   const [socket, setSocket] = useState<Socket | null>(null)
@@ -28,5 +29,24 @@ export function useKernels() {
     console.log({ id, code, language })
   }
 
-  return { runBlock, output }
+  const restartKernel = () => {}
+
+  const clearOutput = (blocks: Block[]) => {
+    setOutput((prev) => {
+      const next = { ...prev }
+      for (const b of blocks) {
+        if (b.type === 'code') {
+          next[b.id] = {
+            id: b.id,
+            result: null,
+            logs: [],
+            error: null,
+          }
+        }
+      }
+      return next
+    })
+  }
+
+  return { runBlock, restartKernel, clearOutput, output }
 }
