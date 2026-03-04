@@ -8,7 +8,7 @@ interface FileHeaderProps {
   onRestart?: () => void
   onClearOutput?: () => void
 }
-const FileHeader = ({ label, onLabelChange }: FileHeaderProps) => {
+const FileHeader = ({ label, onLabelChange, onRunAll }: FileHeaderProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [text, setText] = useState(label)
 
@@ -18,6 +18,11 @@ const FileHeader = ({ label, onLabelChange }: FileHeaderProps) => {
   }
   const handleOnClick = () => {
     //TODO in sprint 3 code execution
+  }
+
+  const handleRunAll = () => {
+    onRunAll?.()
+    console.log('run all')
   }
 
   return (
@@ -43,7 +48,7 @@ const FileHeader = ({ label, onLabelChange }: FileHeaderProps) => {
         )}
       </div>
       <div className='flex w-3/4 flex-row gap-2 pb-2 text-xs'>
-        <Button icon={Play} onClick={handleOnClick}>
+        <Button icon={Play} onClick={handleRunAll}>
           Run All
         </Button>
         <Button icon={RotateCcwIcon} onClick={handleOnClick}>

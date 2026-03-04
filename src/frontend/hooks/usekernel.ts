@@ -25,6 +25,7 @@ export function useKernels() {
   const runBlock = (id: string, code: string, language: Language) => {
     if (!socket) return
     socket.emit('runCode', { id, code, language })
+    console.log({ id, code, language })
   }
 
   return { runBlock, output }

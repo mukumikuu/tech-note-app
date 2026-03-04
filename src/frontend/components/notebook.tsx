@@ -14,10 +14,19 @@ import { useState } from 'react'
 import FileHeader from './fileheader'
 import { useKernels } from '../hooks/usekernel'
 const Notebook = () => {
-  const { blocks, addBlockAfter, reorderBlocks, removeBlock } = useBlocks()
+  const { blocks, addBlockAfter, reorderBlocks, removeBlock, updateBlock } =
+    useBlocks()
   const { runBlock, output } = useKernels()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [label, setLabel] = useState('untitled')
+
+  const runAll = async () => {
+    for (const block of blocks) {
+      if (block.type === 'code') {
+        await runBlock(block.id, block.value!, block.language!)
+      }
+    }
+  }
 
   function onDragStart(event: DragStartEvent) {
     setActiveId(event.active.id as string)
@@ -34,7 +43,11 @@ const Notebook = () => {
 
   return (
     <div>
-      <FileHeader label={label} onLabelChange={setLabel}></FileHeader>
+      <FileHeader
+        label={label}
+        onLabelChange={setLabel}
+        onRunAll={runAll}
+      ></FileHeader>
       <DndContext
         collisionDetection={rectIntersection}
         onDragStart={onDragStart}
@@ -58,6 +71,12 @@ const Notebook = () => {
                   key={block.id}
                   id={block.id}
                   blockIndex={index}
+                  value={block.value}
+                  language={block.language}
+                  onValueChange={(val) => updateBlock(block.id, { value: val })}
+                  onLangChange={(lang) =>
+                    updateBlock(block.id, { language: lang })
+                  }
                   onAdd={(type) => addBlockAfter(index, type)}
                   onRemove={() => removeBlock(block.id)}
                   onExecute={runBlock}

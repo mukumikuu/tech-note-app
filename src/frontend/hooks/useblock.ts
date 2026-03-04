@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
 import Block from '../types/block'
 import type { blockType } from '../types/block'
+import type { Language } from '../../shared/language'
 export const useBlocks = () => {
   const [blocks, setBlocks] = useState<Block[]>([
     { id: crypto.randomUUID(), type: 'markdown' },
@@ -10,10 +11,20 @@ export const useBlocks = () => {
   const addBlockAfter = (index: number, type: blockType) => {
     setBlocks((prev) => {
       const copy = [...prev]
-      copy.splice(index + 1, 0, {
-        id: crypto.randomUUID(),
-        type,
-      })
+      if (type === 'code') {
+        copy.splice(index + 1, 0, {
+          id: crypto.randomUUID(),
+          type,
+          value: 'Write something...',
+          language: 'JavaScript',
+        })
+      } else {
+        copy.splice(index + 1, 0, {
+          id: crypto.randomUUID(),
+          type,
+          value: 'Write something...',
+        })
+      }
       return copy
     })
   }
@@ -31,11 +42,23 @@ export const useBlocks = () => {
     })
   }
 
+  const updateBlock = (
+    id: string,
+    data: Partial<{ value: string; language: Language }>
+  ) => {
+    setBlocks((prev) =>
+      prev.map((b) =>
+        b.id === id && b.type === 'code' ? { ...b, ...data } : b
+      )
+    )
+  }
+
   return {
     blocks,
     setBlocks,
     addBlockAfter,
     removeBlock,
     reorderBlocks,
+    updateBlock,
   }
 }
