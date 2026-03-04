@@ -204,7 +204,14 @@ const CodeBlock = ({
           <div className='bg-blue pt-2 pl-6 font-mono text-sm text-white'>
             {output?.error && <div className='text-red'>{output.error}</div>}
             {output && !output.error && (
-              <div className='text-white'>{output.logs.join('')}</div>
+              <div className='whitespace-pre-wrap text-green-300'>
+                {output.logs.map((log, i) => (
+                  <div key={i}>{log}</div>
+                ))}
+              </div>
+            )}
+            {language !== 'JavaScript' && output?.result !== undefined && (
+              <div className='text-green-300'>{String(output.result)}</div>
             )}
           </div>
         </div>
