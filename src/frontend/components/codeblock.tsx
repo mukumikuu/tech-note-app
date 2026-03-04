@@ -26,6 +26,10 @@ import LanguageButton from './languagebutton'
 type CodeBlockProps = {
   id: string
   blockIndex: number
+  value?: string
+  language?: Language
+  onValueChange?: (value: string) => void
+  onLangChange?: (lang: Language) => void
   onAdd: (type: 'markdown' | 'code') => void
   onRemove: () => void
   onExecute: (id: string, code: string, language: Language) => void
@@ -35,14 +39,16 @@ type CodeBlockProps = {
 const CodeBlock = ({
   id,
   blockIndex,
+  value,
+  language,
+  onValueChange,
+  onLangChange,
   onAdd,
   onRemove,
   onExecute,
   output,
 }: CodeBlockProps) => {
-  const [language, setLanguage] = useState<Language>('JavaScript')
   const [status, setStatus] = useState<CellStatus>('idle')
-  const [code, setCode] = useState('Write something...')
   const { copy, copied } = useCopyToClipboard()
   const editorRef = useRef<HTMLDivElement | null>(null)
   const viewRef = useRef<EditorView | null>(null)
@@ -67,17 +73,17 @@ const CodeBlock = ({
   useEffect(() => {
     if (!editorRef.current) return
     const startState = EditorState.create({
-      doc: code,
+      doc: value,
       extensions: [
         basicSetup,
-        languageCompartment.of(languageMap[language]),
+        languageCompartment.of(languageMap[language!]),
         highlightCompartment.of(
           language === 'Shell' ? darkEditorLegacy : darkEditor
         ),
-        linterCompartment.of(linterMap[language]),
+        linterCompartment.of(linterMap[language!]),
         EditorView.updateListener.of((update) => {
-          if (update.docChanged) {
-            setCode(update.state.doc.toString())
+          if (update.docChanged && onValueChange) {
+            onValueChange(update.state.doc.toString())
           }
         }),
         EditorView.editable.of(!isDragging),
@@ -100,11 +106,11 @@ const CodeBlock = ({
     const isLegacy = language === 'Shell'
     viewRef.current.dispatch({
       effects: [
-        languageCompartment.reconfigure(languageMap[language]),
+        languageCompartment.reconfigure(languageMap[language!]),
         highlightCompartment.reconfigure(
           isLegacy ? darkEditorLegacy : darkEditor
         ),
-        linterCompartment.reconfigure(linterMap[language]),
+        linterCompartment.reconfigure(linterMap[language!]),
       ],
     })
   }, [language])
@@ -119,10 +125,10 @@ const CodeBlock = ({
     }
   }, [output])
 
-  const runCell = () => {
+  const runBlock = () => {
     try {
       setStatus('running')
-      onExecute(id, code, language)
+      onExecute(id, value!, language!)
       setTimeout(() => setStatus('idle'), 300)
     } catch {
       setStatus('error')
@@ -131,7 +137,7 @@ const CodeBlock = ({
   }
 
   const handleCopy = async () => {
-    await copy(code)
+    await copy(value!)
     if (!copied) console.log('copy failed')
   }
 
@@ -155,7 +161,7 @@ const CodeBlock = ({
             status={status}
             iconColor='var(--color-light-blue)'
             iconSize={16}
-            onExecute={runCell}
+            onExecute={runBlock}
           />
           <div className='font-poppins text-[12px] text-white'>{`[${blockIndex}]`}</div>
           <div className='flex flex-row items-center'>
@@ -173,8 +179,8 @@ const CodeBlock = ({
             style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
           >
             <LanguageButton
-              value={language}
-              onChange={setLanguage}
+              value={language!}
+              onChange={onLangChange!}
             ></LanguageButton>
             <Button
               data-testid='copy'

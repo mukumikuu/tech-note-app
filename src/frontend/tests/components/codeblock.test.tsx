@@ -14,12 +14,20 @@ describe('codeblock', () => {
   const setup = () => {
     const onRemove = jest.fn()
     const onAdd = jest.fn()
+    const onExecute = jest.fn()
+    const onValueChange = jest.fn()
+    const onLangChange = jest.fn()
     render(
       <CodeBlock
         id='a'
         blockIndex={0}
+        value='Write something...'
+        language='JavaScript'
+        onValueChange={onValueChange}
+        onLangChange={onLangChange}
         onAdd={onAdd}
         onRemove={onRemove}
+        onExecute={onExecute}
       ></CodeBlock>
     )
     return { onAdd, onRemove }
