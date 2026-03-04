@@ -29,7 +29,10 @@ export function useKernels() {
     console.log({ id, code, language })
   }
 
-  const restartKernel = () => {}
+  const restartKernel = async () => {
+    await socket?.emit('restartKernel')
+    setOutput({})
+  }
 
   const clearOutput = (blocks: Block[]) => {
     setOutput((prev) => {

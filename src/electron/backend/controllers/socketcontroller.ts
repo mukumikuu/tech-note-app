@@ -18,6 +18,10 @@ const socketHandlers = (socket: Socket, kernel: KernelManager) => {
       })
     }
   })
+  socket.on('restartKernel', async () => {
+    kernel.stop()
+    await kernel.start()
+  })
 }
 
 export default socketHandlers
