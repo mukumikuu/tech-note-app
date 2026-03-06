@@ -2,33 +2,19 @@ import { KernelResult } from '../../../../shared/kernelResult.js'
 import { LanguageKernel } from '../../types/languagekernell.js'
 import { spawn } from 'child_process'
 
-export class ShellKernel implements LanguageKernel {
-  private getShell() {
-    switch (process.platform) {
-      case 'win32':
-        return 'powershell.exe'
-      case 'darwin':
-        return '/bin/bash'
-      case 'linux':
-        return '/bin/bash'
-      default:
-        return '/bin/bash'
-    }
-  }
-
+export class PyKernel implements LanguageKernel {
   async run(id: string, code: string): Promise<KernelResult> {
     return new Promise((resolve) => {
-      const shell = this.getShell()
-      const child = spawn(shell, ['-c', code])
+      const process = spawn('python', ['-c', code])
       let stdout = ''
       let stderr = ''
-      child.stdout.on('data', (data) => {
+      process.stdout.on('data', (data) => {
         stdout += data.toString()
       })
-      child.stderr.on('data', (data) => {
+      process.stderr.on('data', (data) => {
         stderr += data.toString()
       })
-      child.on('close', () => {
+      process.on('close', () => {
         resolve({
           id,
           result: stdout,
