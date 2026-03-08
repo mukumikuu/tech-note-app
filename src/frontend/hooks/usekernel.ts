@@ -41,7 +41,7 @@ export function useKernels() {
         if (b.type === 'code') {
           next[b.id] = {
             id: b.id,
-            result: null,
+            result: undefined,
             logs: [],
             error: null,
           }

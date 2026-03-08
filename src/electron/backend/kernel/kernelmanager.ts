@@ -15,9 +15,9 @@ export class KernelManager {
 
   stop() {
     if (this.kernel) {
-      console.log('stop')
       this.kernel.kill()
       this.kernel = null
+      console.log('kernel stop')
     }
   }
 

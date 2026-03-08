@@ -10,7 +10,7 @@ process.on('message', async ({id, code, language}) => {
     const message = e instanceof Error ? e.message : String(e)
     const payload: KernelResult = {
       id,
-      result: null,
+      result: undefined,
       logs: [],
       error: message,
     }
