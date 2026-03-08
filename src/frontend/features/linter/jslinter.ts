@@ -40,6 +40,7 @@ const jsLinter = linter((view): Diagnostic[] => {
     if (
       trimmed &&
       !trimmed.endsWith(';') &&
+      !trimmed.endsWith(',') &&
       !trimmed.endsWith('{') &&
       !trimmed.endsWith('}') &&
       !trimmed.startsWith('//')
