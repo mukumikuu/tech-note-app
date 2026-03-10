@@ -16,7 +16,9 @@
     "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64",
     "dist:win": "npm run transpile:electron && npm run build && electron-builder --win --x64",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "test": "jest"
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "jest --config jest.config.frontend.mjs",
+    "test:backend": "jest --config jest.config.backend.mjs"
   },
   "dependencies": {
     "@codemirror/lang-cpp": "^6.0.3",

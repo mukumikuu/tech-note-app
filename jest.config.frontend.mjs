@@ -8,4 +8,5 @@ export default {
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
     '\\.(svg|png|jpg|jpeg|gif)$': '<rootDir>/src/test/mocks/fileMock.ts',
   },
+  testMatch: ['**/frontend/tests/**/*.test.ts?(x)'],
 }

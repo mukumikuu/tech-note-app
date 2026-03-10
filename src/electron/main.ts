@@ -28,13 +28,11 @@ app.whenReady().then(async () => {
 
   const { httpServer, kernel, PORT } = serverStart()
   kernel.start()
-  logMemory()
   httpServer.listen(PORT, () => {
     console.log(`Electron Socket.IO server running on ${PORT}`)
   })
 
   app.on('window-all-closed', () => {
-    logMemory()
     httpServer.close()
     kernel.stop()
     app.quit()
