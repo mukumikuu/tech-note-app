@@ -1,6 +1,6 @@
 import { KernelResult } from '../../../shared/kernelResult.js'
 import { CodeExecutor } from '../types/codeexecutor.js'
-import vm from 'vm'
+import * as vm from 'vm'
 
 export class Executor implements CodeExecutor {
   async execute(id:string, code: string): Promise<KernelResult> {
