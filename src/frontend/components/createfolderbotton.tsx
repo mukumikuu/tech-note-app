@@ -1,14 +1,23 @@
 import Button from './button'
 import { FolderPlus } from 'lucide-react'
 
-const CreateFolderButton = () => {
+interface CreateFolderButtonProps {
+  className?: string
+  onClick: () => void
+}
+
+const CreateFolderButton = ({
+  className,
+  onClick,
+}: CreateFolderButtonProps) => {
   return (
     <Button
       variant='default'
       icon={FolderPlus}
       rounded='lg'
       iconSize={16}
-      onClick={() => console.log('New folder')}
+      className={className}
+      onClick={onClick} // edit this later to open a modal for folder name input
     >
       Create Folder
     </Button>

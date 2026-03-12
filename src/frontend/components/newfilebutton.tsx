@@ -1,14 +1,22 @@
 import Button from './button'
 import { FilePlusCorner } from 'lucide-react'
 
-const NewFileButton = () => {
+interface NewFileButtonProps {
+  className?: string
+}
+
+const NewFileButton = ({ className }: NewFileButtonProps) => {
   return (
     <Button
       variant='default'
       icon={FilePlusCorner}
       rounded='lg'
+      className={className}
       iconSize={16}
-      onClick={() => console.log('New file')}
+      onClick={() => {
+                onAdd('folder')
+                setOpened((prev) => !prev)
+              }} // edit this later to open a modal for file name input
     >
       New File
     </Button>
