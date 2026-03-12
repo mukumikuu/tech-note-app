@@ -1,6 +1,6 @@
 import { Language } from '../../shared/language.js'
-import { JSKernel } from '../backend/kernel/languagekernel/jskernel'
-import { KernelFactory } from '../backend/services/kernelfactory'
+import { JSKernel } from '../backend/kernel/languagekernel/jskernel.js'
+import { KernelFactory } from '../backend/services/kernelfactory.js'
 describe('KernelFactory', () => {
   const setup = () => {
     const factory = new KernelFactory()

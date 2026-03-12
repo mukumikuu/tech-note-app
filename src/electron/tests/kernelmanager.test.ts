@@ -1,6 +1,6 @@
-import { KernelManager } from '../backend/kernel/kernelmanager'
-import { KernelResult } from '../../shared/kernelResult'
-import { KernelProcess } from '../backend/types/kernelprocess'
+import { KernelManager } from '../backend/kernel/kernelmanager.js'
+import { KernelResult } from '../../shared/kernelResult.js'
+import { KernelProcess } from '../backend/types/kernelprocess.js'
 
 describe('KernelManager', () => {
   const createMockKernel = () => {
