@@ -4,12 +4,12 @@ export default {
     '^.+\\.tsx?$': [
       'ts-jest',
       {
-        tsconfig: 'src/electron/tsconfig.json',
+        tsconfig: 'tsconfig.json',
       },
     ],
   },
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
-  testMatch: ['**/electron/tests/**/*.test.ts'],
+  testMatch: ['**/tests/integration/backend/*.test.ts'],
 }

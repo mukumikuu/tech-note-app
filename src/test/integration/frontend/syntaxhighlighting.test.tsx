@@ -1,7 +1,7 @@
 import { render, screen, act } from '@testing-library/react'
-import CodeBlock from '../../components/codeblock'
+import CodeBlock from '../../../frontend/components/codeblock'
 import { syntaxTree } from '@codemirror/language'
-import type { EditorDiv } from '../../../test/types/editor'
+import type { EditorDiv } from '../../types/editor'
 import { EditorView } from 'codemirror'
 
 function verifyExist(view: EditorView, ASTname: string): boolean {
