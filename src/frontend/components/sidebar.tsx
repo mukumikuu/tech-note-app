@@ -7,15 +7,28 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useState } from 'react'
+import { useState, type Dispatch, type SetStateAction } from 'react'
 import OptionBar from './optionbar'
 import SideBarElement from './sidebarelement'
 import SortableSidebarElement from './sortablesidebarelement'
-import { useFolders } from '../hooks/usefolder'
+import Folder from '../types/folder'
 import TrashDropZone from './trashbar'
-const Sidebar = () => {
-  const { folders, setFolders, addFolder, reorderFolders, removeFolder } =
-    useFolders()
+
+interface SidebarProps {
+  folders: Folder[]
+  setFolders: Dispatch<SetStateAction<Folder[]>>
+  addFolder: (index: number, name: string) => void
+  removeFolder: (id: string) => void
+  reorderFolders: (activeId: string, overId: string) => void
+}
+
+const Sidebar = ({
+  folders,
+  setFolders,
+  addFolder,
+  removeFolder,
+  reorderFolders,
+}: SidebarProps) => {
   const [activeId, setActiveId] = useState<string | null>(null)
 
   const isFolderOpened = folders.length > 0
@@ -73,7 +86,7 @@ const Sidebar = () => {
                     id={folder.id}
                     name={folder.name}
                     onRename={(name) =>
-                      setFolders((f) =>
+                      setFolders((f: Folder[]) =>
                         f.map((item) =>
                           item.id === folder.id ? { ...item, name } : item
                         )
