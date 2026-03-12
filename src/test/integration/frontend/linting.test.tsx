@@ -1,7 +1,7 @@
 import { render, screen, act, waitFor } from '@testing-library/react'
-import CodeBlock from '../../components/codeblock'
+import CodeBlock from '../../../frontend/components/codeblock'
 import { diagnosticCount } from '@codemirror/lint'
-import type { EditorDiv } from '../../../test/types/editor'
+import type { EditorDiv } from '../../types/editor'
 
 describe('linting', () => {
   const setup = () => {
