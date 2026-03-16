@@ -26,8 +26,8 @@ import LanguageButton from './languagebutton'
 type CodeBlockProps = {
   id: string
   blockIndex: number
-  value?: string
-  language?: Language
+  value: string
+  language: Language
   onValueChange?: (value: string) => void
   onLangChange?: (lang: Language) => void
   onAdd: (type: 'markdown' | 'code') => void
@@ -76,11 +76,11 @@ const CodeBlock = ({
       doc: value,
       extensions: [
         basicSetup,
-        languageCompartment.of(languageMap[language!]),
+        languageCompartment.of(languageMap[language]),
         highlightCompartment.of(
           language === 'Shell' ? darkEditorLegacy : darkEditor
         ),
-        linterCompartment.of(linterMap[language!]),
+        linterCompartment.of(linterMap[language]),
         EditorView.updateListener.of((update) => {
           if (update.docChanged && onValueChange) {
             onValueChange(update.state.doc.toString())
@@ -106,11 +106,11 @@ const CodeBlock = ({
     const isLegacy = language === 'Shell'
     viewRef.current.dispatch({
       effects: [
-        languageCompartment.reconfigure(languageMap[language!]),
+        languageCompartment.reconfigure(languageMap[language]),
         highlightCompartment.reconfigure(
           isLegacy ? darkEditorLegacy : darkEditor
         ),
-        linterCompartment.reconfigure(linterMap[language!]),
+        linterCompartment.reconfigure(linterMap[language]),
       ],
     })
   }, [language])
@@ -128,7 +128,7 @@ const CodeBlock = ({
   const runBlock = () => {
     try {
       setStatus('running')
-      onExecute(id, value!, language!)
+      onExecute(id, value, language)
       setTimeout(() => setStatus('idle'), 300)
     } catch {
       setStatus('error')
