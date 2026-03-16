@@ -74,8 +74,8 @@ const Notebook = () => {
                   key={block.id}
                   id={block.id}
                   blockIndex={index}
-                  value={block.value}
-                  language={block.language}
+                  value={block.value!}
+                  language={block.language!}
                   onValueChange={(val) => updateBlock(block.id, { value: val })}
                   onLangChange={(lang) =>
                     updateBlock(block.id, { language: lang })
@@ -101,6 +101,8 @@ const Notebook = () => {
               <CodeBlock
                 id={activeBlock.id}
                 blockIndex={0}
+                value={activeBlock.value!}
+                language={activeBlock.language!}
                 onAdd={() => {}}
                 onRemove={() => {}}
                 onExecute={() => {}}
