@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Button from './button'
 import { Play, RotateCcwIcon, Trash2 } from 'lucide-react'
-import Block from '../types/block'
+import Block from '../../shared/block'
 interface FileHeaderProps {
   blocks: Block[]
   label: string

@@ -1,4 +1,4 @@
-import type { Language } from '../../shared/language'
+import type { Language } from './language'
 
 type blockType = 'code' | 'markdown'
 export type { blockType }
@@ -6,7 +6,7 @@ export type { blockType }
 export default class Block {
   public id: string
   public type: blockType
-  public value?: string
+  public content?: string
   public language?: Language
 
   public constructor(type: blockType) {

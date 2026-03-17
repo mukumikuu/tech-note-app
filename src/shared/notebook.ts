@@ -1,14 +1,14 @@
-type folderType = 'file' | 'folder'
-export type { folderType }
+import Block from './block'
 
-class Folder {
+export default class Notebook {
   public id: string
   public name: string
+  public blocks: Block[]
+  public folderid?: string
 
   public constructor(name: string) {
     this.id = crypto.randomUUID()
     this.name = name
+    this.blocks = []
   }
 }
-
-export default Folder

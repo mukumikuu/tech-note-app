@@ -1,5 +1,5 @@
 import { Play, Loader2, Check, X } from 'lucide-react'
-import type { CellStatus } from '../types/cellstatus'
+import type { CellStatus } from '../../shared/cellstatus'
 import '../ui/index.css'
 interface ExecuteCellButtonProps {
   className?: string

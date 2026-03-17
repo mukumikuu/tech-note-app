@@ -11,7 +11,7 @@ import { useState, type Dispatch, type SetStateAction } from 'react'
 import OptionBar from './optionbar'
 import SideBarElement from './sidebarelement'
 import SortableSidebarElement from './sortablesidebarelement'
-import Folder from '../types/folder'
+import Folder from '../../shared/folder'
 import TrashDropZone from './trashbar'
 
 interface SidebarProps {
