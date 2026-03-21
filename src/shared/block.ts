@@ -1,4 +1,4 @@
-import type { Language } from './language'
+import type { Language } from './language.js'
 
 type blockType = 'code' | 'markdown'
 export type { blockType }
