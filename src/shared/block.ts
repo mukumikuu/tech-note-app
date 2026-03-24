@@ -1,16 +1,16 @@
-import type { Language } from '../../shared/language'
+import type { Language } from './language.js'
 
 type blockType = 'code' | 'markdown'
 export type { blockType }
 
 export default class Block {
-  public id: string
+  public blockid: string
   public type: blockType
-  public value?: string
+  public content?: string
   public language?: Language
 
   public constructor(type: blockType) {
-    this.id = crypto.randomUUID()
+    this.blockid = crypto.randomUUID()
     this.type = type
   }
 }

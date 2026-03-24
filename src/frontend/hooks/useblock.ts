@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
-import Block from '../types/block'
-import type { blockType } from '../types/block'
+import Block from '../../shared/block'
+import type { blockType } from '../../shared/block'
 import type { Language } from '../../shared/language'
 export const useBlocks = () => {
   const [blocks, setBlocks] = useState<Block[]>([

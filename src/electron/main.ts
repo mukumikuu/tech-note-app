@@ -2,10 +2,14 @@ import { app, BrowserWindow } from 'electron'
 import path from 'path'
 import serverStart from './backend/server.js'
 import { isDev, logAppMemory, logMemory } from './util.js'
+import { initDB } from './backend/database/initdb.js'
 
 let mainWindow: BrowserWindow | null = null
 
 app.whenReady().then(async () => {
+  initDB() // ✅ ADD HERE
+  console.log('✅ Database initialized')
+
   mainWindow = new BrowserWindow({
     webPreferences: {
       nodeIntegration: false,

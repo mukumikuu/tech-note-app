@@ -1,4 +1,4 @@
-import Folder from '../types/folder'
+import Folder from '../../shared/folder'
 import { useState } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
 export const useFolders = () => {
