@@ -23,7 +23,7 @@ const Notebook = () => {
   const runAll = async () => {
     for (const b of blocks) {
       if (b.type === 'code') {
-        await runBlock(b.id, b.value!, b.language!)
+        await runBlock(b.blockid, b.content!, b.language!)
       }
     }
   }
@@ -39,7 +39,7 @@ const Notebook = () => {
     reorderBlocks(active.id as string, over!.id as string)
   }
 
-  const activeBlock = blocks.find((b) => b.id === activeId)
+  const activeBlock = blocks.find((b) => b.blockid === activeId)
 
   return (
     <div>
@@ -57,33 +57,35 @@ const Notebook = () => {
         onDragEnd={onDragEnd}
       >
         <SortableContext
-          items={blocks.map((b) => b.id)}
+          items={blocks.map((b) => b.blockid)}
           strategy={verticalListSortingStrategy}
         >
           <div className='flex flex-col gap-4'>
             {blocks.map((block, index) =>
               block.type === 'markdown' ? (
                 <MarkdownBlock
-                  key={block.id}
-                  id={block.id}
+                  key={block.blockid}
+                  id={block.blockid}
                   onAdd={(type) => addBlockAfter(index, type)}
-                  onRemove={() => removeBlock(block.id)}
+                  onRemove={() => removeBlock(block.blockid)}
                 />
               ) : (
                 <CodeBlock
-                  key={block.id}
-                  id={block.id}
+                  key={block.blockid}
+                  id={block.blockid}
                   blockIndex={index}
-                  value={block.value!}
+                  content={block.content!}
                   language={block.language!}
-                  onValueChange={(val) => updateBlock(block.id, { value: val })}
+                  onContentChange={(val) =>
+                    updateBlock(block.blockid, { content: val })
+                  }
                   onLangChange={(lang) =>
-                    updateBlock(block.id, { language: lang })
+                    updateBlock(block.blockid, { language: lang })
                   }
                   onAdd={(type) => addBlockAfter(index, type)}
-                  onRemove={() => removeBlock(block.id)}
+                  onRemove={() => removeBlock(block.blockid)}
                   onExecute={runBlock}
-                  output={output[block.id]}
+                  output={output[block.blockid]}
                 />
               )
             )}
@@ -93,15 +95,15 @@ const Notebook = () => {
           {activeBlock ? (
             activeBlock.type === 'markdown' ? (
               <MarkdownBlock
-                id={activeBlock.id}
+                id={activeBlock.blockid}
                 onAdd={() => {}}
                 onRemove={() => {}}
               />
             ) : (
               <CodeBlock
-                id={activeBlock.id}
+                id={activeBlock.blockid}
                 blockIndex={0}
-                value={activeBlock.value!}
+                content={activeBlock.content!}
                 language={activeBlock.language!}
                 onAdd={() => {}}
                 onRemove={() => {}}

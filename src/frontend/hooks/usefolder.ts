@@ -8,7 +8,7 @@ export const useFolders = () => {
     setFolders((prev) => {
       const copy = [...prev]
       copy.splice(index + 1, 0, {
-        id: crypto.randomUUID(),
+        folderid: crypto.randomUUID(),
         name: name,
       })
       return copy
@@ -16,13 +16,13 @@ export const useFolders = () => {
   }
 
   const removeFolder = (id: string) => {
-    setFolders((prev) => prev.filter((f) => f.id !== id))
+    setFolders((prev) => prev.filter((f) => f.folderid !== id))
   }
 
   const reorderFolders = (activeId: string, overId: string) => {
     if (activeId === overId) return
-    const oldIndex = folders.findIndex((b) => b.id === activeId)
-    const newIndex = folders.findIndex((b) => b.id === overId)
+    const oldIndex = folders.findIndex((b) => b.folderid === activeId)
+    const newIndex = folders.findIndex((b) => b.folderid === overId)
     setFolders((folders) => {
       return arrayMove(folders, oldIndex, newIndex)
     })

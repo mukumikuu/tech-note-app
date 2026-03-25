@@ -26,9 +26,9 @@ import LanguageButton from './languagebutton'
 type CodeBlockProps = {
   id: string
   blockIndex: number
-  value: string
+  content: string
   language: Language
-  onValueChange?: (value: string) => void
+  onContentChange?: (content: string) => void
   onLangChange?: (lang: Language) => void
   onAdd: (type: 'markdown' | 'code') => void
   onRemove: () => void
@@ -39,9 +39,9 @@ type CodeBlockProps = {
 const CodeBlock = ({
   id,
   blockIndex,
-  value,
+  content,
   language,
-  onValueChange,
+  onContentChange,
   onLangChange,
   onAdd,
   onRemove,
@@ -73,7 +73,7 @@ const CodeBlock = ({
   useEffect(() => {
     if (!editorRef.current) return
     const startState = EditorState.create({
-      doc: value,
+      doc: content,
       extensions: [
         basicSetup,
         languageCompartment.of(languageMap[language]),
@@ -82,8 +82,8 @@ const CodeBlock = ({
         ),
         linterCompartment.of(linterMap[language]),
         EditorView.updateListener.of((update) => {
-          if (update.docChanged && onValueChange) {
-            onValueChange(update.state.doc.toString())
+          if (update.docChanged && onContentChange) {
+            onContentChange(update.state.doc.toString())
           }
         }),
         EditorView.editable.of(!isDragging),
@@ -128,7 +128,7 @@ const CodeBlock = ({
   const runBlock = () => {
     try {
       setStatus('running')
-      onExecute(id, value, language)
+      onExecute(id, content, language)
       setTimeout(() => setStatus('idle'), 300)
     } catch {
       setStatus('error')
@@ -137,7 +137,7 @@ const CodeBlock = ({
   }
 
   const handleCopy = async () => {
-    await copy(value!)
+    await copy(content!)
     if (!copied) console.log('copy failed')
   }
 

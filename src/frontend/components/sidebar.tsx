@@ -54,7 +54,7 @@ const Sidebar = ({
     setActiveId(null)
   }
 
-  const activeFolder = folders.find((f) => f.id === activeId)
+  const activeFolder = folders.find((f) => f.folderid === activeId)
 
   return (
     <div className='bg-blue flex h-screen w-1/4 flex-col px-2 py-2'>
@@ -76,19 +76,21 @@ const Sidebar = ({
             onDragCancel={onDragCancel}
           >
             <SortableContext
-              items={folders.map((f) => f.id)}
+              items={folders.map((f) => f.folderid)}
               strategy={verticalListSortingStrategy}
             >
               <div className='flex flex-col gap-1'>
                 {folders.map((folder) => (
                   <SortableSidebarElement
-                    key={folder.id}
-                    id={folder.id}
+                    key={folder.folderid}
+                    id={folder.folderid}
                     name={folder.name}
                     onRename={(name) =>
                       setFolders((f: Folder[]) =>
                         f.map((item) =>
-                          item.id === folder.id ? { ...item, name } : item
+                          item.folderid === folder.folderid
+                            ? { ...item, name }
+                            : item
                         )
                       )
                     }

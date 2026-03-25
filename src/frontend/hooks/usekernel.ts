@@ -39,8 +39,8 @@ export function useKernels() {
       const next = { ...prev }
       for (const b of blocks) {
         if (b.type === 'code') {
-          next[b.id] = {
-            id: b.id,
+          next[b.blockid] = {
+            id: b.blockid,
             result: undefined,
             logs: [],
             error: null,
