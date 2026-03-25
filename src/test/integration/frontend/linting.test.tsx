@@ -8,15 +8,15 @@ describe('linting', () => {
     const onRemove = jest.fn()
     const onAdd = jest.fn()
     const onExecute = jest.fn()
-    const onValueChange = jest.fn()
+    const onContentChange = jest.fn()
     const onLangChange = jest.fn()
     render(
       <CodeBlock
         id='a'
         blockIndex={0}
-        value='Write something...'
+        content='Write something...'
         language='JavaScript'
-        onValueChange={onValueChange}
+        onContentChange={onContentChange}
         onLangChange={onLangChange}
         onAdd={onAdd}
         onRemove={onRemove}
