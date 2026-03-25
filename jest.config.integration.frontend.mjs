@@ -9,4 +9,17 @@ export default {
     '\\.(svg|png|jpg|jpeg|gif)$': '<rootDir>/src/test/mocks/fileMock.ts',
   },
   testMatch: ['**/test/integration/frontend/*.test.tsx'],
+  reporters: [
+    [
+      'default',
+      [
+        'jest-html-reporters',
+        {
+          publicPath: './test-results',
+          filename: 'frontend-it.html',
+          openReport: true,
+        },
+      ],
+    ],
+  ],
 }
