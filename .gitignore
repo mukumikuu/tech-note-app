@@ -30,3 +30,9 @@ dist-electron
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# SQLite
+sql*.exe
+
+# Test
+/coverage

@@ -19,9 +19,9 @@
     "rebuild": "electron-rebuild",
     "test": "npm run test:u && npm run test:i",
     "test:u": "npm run test:frontend && npm run test:backend",
-    "test:frontend": "jest --config jest.config.frontend.mjs",
-    "test:backend": "npm run transpile:electron && jest --config jest.config.backend.mjs",
-    "test:i": "jest --config jest.config.integration.frontend.mjs && npm run transpile:electron && jest --config jest.config.integration.backend.mjs",
+    "test:frontend": "jest --coverage --config jest.config.frontend.mjs",
+    "test:backend": "npm run transpile:electron && jest --coverage --config jest.config.backend.mjs",
+    "test:i": "jest --coverage --config jest.config.integration.frontend.mjs && npm run transpile:electron && jest --coverage --config jest.config.integration.backend.mjs",
     "test:e2e": "npx playwright test"
   },
   "dependencies": {
@@ -44,7 +44,8 @@
     "react-dom": "^19.2.4",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.1.18",
+    "trie-search": "^2.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

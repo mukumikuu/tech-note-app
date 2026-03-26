@@ -10,15 +10,42 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearch } from '../hooks/useSearch'
 import FileHeader from './fileheader'
 import { useKernels } from '../hooks/usekernel'
-const Notebook = () => {
+interface NotebookProps {
+  notebookId: string
+}
+const Notebook = ({ notebookId }: NotebookProps) => {
   const { blocks, addBlockAfter, reorderBlocks, removeBlock, updateBlock } =
     useBlocks()
   const { runBlock, restartKernel, clearOutput, output } = useKernels()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [label, setLabel] = useState('untitled')
+  const [isSearching, setIsSearching] = useState(false)
+  const [query, setQuery] = useState('')
+  const { results, search } = useSearch(notebookId)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement
+      const isTyping =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      if (isTyping) return
+      if (
+        ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') ||
+        e.key === 'ESCAPE'
+      ) {
+        e.preventDefault()
+        setIsSearching((prev) => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const runAll = async () => {
     for (const b of blocks) {
@@ -60,6 +87,36 @@ const Notebook = () => {
           items={blocks.map((b) => b.blockid)}
           strategy={verticalListSortingStrategy}
         >
+          {isSearching && (
+            <div className='sticky top-0 z-10 p-2 text-white shadow'>
+              <input
+                autoFocus
+                className='w-full border px-2 py-1 text-sm'
+                placeholder='Search in notebook...'
+                value={query}
+                onChange={(e) => {
+                  const q = e.target.value
+                  setQuery(q)
+                  search(q)
+                }}
+              />
+            </div>
+          )}
+          {isSearching && results.length > 0 && (
+            <div className='p-2 text-sm text-white'>
+              {results.map((r) => (
+                <div key={r.notebookid}>
+                  <div className='font-bold'>{r.name}</div>
+
+                  {r.matches.map((m) => (
+                    <div key={m.blockid} className='text-xs opacity-70'>
+                      {m.snippet}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
           <div className='flex flex-col gap-4'>
             {blocks.map((block, index) =>
               block.type === 'markdown' ? (

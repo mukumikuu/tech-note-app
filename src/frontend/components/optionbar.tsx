@@ -4,14 +4,12 @@ import { FilterIcon, SearchIcon, Ellipsis } from 'lucide-react'
 
 interface OptionBarProps {
   onAdd: (type: 'folder') => void
+  onToggleSearch: () => void
 }
 
-const OptionBar = ({ onAdd }: OptionBarProps) => {
+const OptionBar = ({ onAdd, onToggleSearch }: OptionBarProps) => {
   const [opened, setOpened] = useState(false)
   const handleFilter = () => {
-    //TODO in sprint 6
-  }
-  const handleSearch = () => {
     //TODO in sprint 6
   }
   const handleEllipsis = () => {
@@ -27,7 +25,7 @@ const OptionBar = ({ onAdd }: OptionBarProps) => {
           iconSize={12}
         ></Button>
         <Button
-          onClick={handleSearch}
+          onClick={onToggleSearch}
           variant='icon'
           icon={SearchIcon}
           iconSize={12}

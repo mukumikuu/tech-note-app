@@ -13,6 +13,7 @@ import SideBarElement from './sidebarelement'
 import SortableSidebarElement from './sortablesidebarelement'
 import Folder from '../../shared/folder'
 import TrashDropZone from './trashbar'
+import { useSearch } from '../hooks/useSearch'
 
 interface SidebarProps {
   folders: Folder[]
@@ -30,6 +31,9 @@ const Sidebar = ({
   reorderFolders,
 }: SidebarProps) => {
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [isSearching, setIsSearching] = useState(false)
+  const [query, setQuery] = useState('')
+  const { results, search } = useSearch()
 
   const isFolderOpened = folders.length > 0
 
@@ -57,59 +61,89 @@ const Sidebar = ({
   const activeFolder = folders.find((f) => f.folderid === activeId)
 
   return (
-    <div className='bg-blue flex h-screen w-1/4 flex-col px-2 py-2'>
-      <OptionBar onAdd={() => addFolder(0, 'untitled')}></OptionBar>
+    <div className='bg-blue flex h-screen w-1/4 flex-col overflow-hidden px-2 py-2'>
+      <OptionBar
+        onAdd={() => addFolder(0, 'untitled')}
+        onToggleSearch={() => setIsSearching((prev) => !prev)}
+      ></OptionBar>
+      {isSearching && (
+        <input
+          className='mt-2 text-sm text-white'
+          placeholder='Search...'
+          value={query}
+          onChange={(e) => {
+            const q = e.target.value
+            setQuery(q)
+            search(q)
+          }}
+        />
+      )}
       {!isFolderOpened && (
         <div className='font-poppins pt-2 text-center text-sm text-white'>
           NO FOLDER OPENED
         </div>
       )}
-      {isFolderOpened && (
-        <>
-          <div className='font-poppins gap-2 pt-2 pb-2 text-left text-sm text-white'>
-            FOLDERS
-          </div>
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
-            onDragCancel={onDragCancel}
-          >
-            <SortableContext
-              items={folders.map((f) => f.folderid)}
-              strategy={verticalListSortingStrategy}
+      {isSearching ? (
+        <div className='mt-2 flex flex-col gap-2 text-white'>
+          {results.map((r) => (
+            <div key={r.notebookid}>
+              <div className='font-bold'>{r.name}</div>
+              {r.matches.map((m) => (
+                <div key={m.blockid} className='text-xs opacity-80'>
+                  {m.snippet}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      ) : (
+        isFolderOpened && (
+          <>
+            <div className='font-poppins gap-2 pt-2 pb-2 text-left text-sm text-white'>
+              FOLDERS
+            </div>
+            <DndContext
+              collisionDetection={closestCenter}
+              onDragStart={onDragStart}
+              onDragEnd={onDragEnd}
+              onDragCancel={onDragCancel}
             >
-              <div className='flex flex-col gap-1'>
-                {folders.map((folder) => (
-                  <SortableSidebarElement
-                    key={folder.folderid}
-                    id={folder.folderid}
-                    name={folder.name}
-                    onRename={(name) =>
-                      setFolders((f: Folder[]) =>
-                        f.map((item) =>
-                          item.folderid === folder.folderid
-                            ? { ...item, name }
-                            : item
+              <SortableContext
+                items={folders.map((f) => f.folderid)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className='flex flex-col gap-1'>
+                  {folders.map((folder) => (
+                    <SortableSidebarElement
+                      key={folder.folderid}
+                      id={folder.folderid}
+                      name={folder.name}
+                      onRename={(name) =>
+                        setFolders((f: Folder[]) =>
+                          f.map((item) =>
+                            item.folderid === folder.folderid
+                              ? { ...item, name }
+                              : item
+                          )
                         )
-                      )
-                    }
+                      }
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+              <TrashDropZone></TrashDropZone>
+              <DragOverlay>
+                {activeFolder ? (
+                  <SideBarElement
+                    label={activeFolder.name}
+                    onClick={() => {}}
+                    className='opacity-100'
                   />
-                ))}
-              </div>
-            </SortableContext>
-            <TrashDropZone></TrashDropZone>
-            <DragOverlay>
-              {activeFolder ? (
-                <SideBarElement
-                  label={activeFolder.name}
-                  onClick={() => {}}
-                  className='opacity-100'
-                />
-              ) : null}
-            </DragOverlay>
-          </DndContext>
-        </>
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+          </>
+        )
       )}
     </div>
   )
