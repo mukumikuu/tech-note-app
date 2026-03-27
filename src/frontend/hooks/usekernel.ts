@@ -1,25 +1,23 @@
 import { useEffect, useState } from 'react'
-import { Socket, io } from 'socket.io-client'
 import type { KernelResult } from '../../shared/kernelResult'
 import type { Language } from '../../shared/language'
 import Block from '../../shared/block'
+import { socket } from '../utils/socket'
 
 export function useKernels() {
-  const [socket, setSocket] = useState<Socket | null>(null)
   const [output, setOutput] = useState<Record<string, KernelResult>>({})
 
   useEffect(() => {
-    const s = io('http://localhost:3030')
-    setSocket(s)
-    s.on('connect', () => {
+    socket.on('connect', () => {
       console.log('connected to kernel manager')
     })
-    s.on('codeResult', ({ id, result }) => {
+    socket.on('codeResult', ({ id, result }) => {
       console.log(result)
       setOutput((prev) => ({ ...prev, [id]: result }))
     })
     return () => {
-      s.disconnect()
+      socket.off('connect')
+      socket.off('codeResult')
     }
   }, [])
 

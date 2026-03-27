@@ -34,7 +34,7 @@ function App() {
             addFolder={addFolder}
           />
         </>
-        {!open && <Notebook></Notebook>}
+        {!open && <Notebook notebookId='placeholder'></Notebook>}
       </div>
     </div>
   )

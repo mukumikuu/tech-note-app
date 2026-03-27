@@ -3,6 +3,7 @@ import { app } from 'electron'
 import path from 'path'
 
 const dbPath = path.join(app.getPath('userData'), 'tech-notes.db')
+console.log(dbPath)
 const db = new Database(dbPath)
 
 export default db
