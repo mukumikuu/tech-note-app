@@ -6,7 +6,7 @@ import Block from '../../../shared/block.js'
 type NotebookRow = {
   notebookid: string
   name: string
-  folder_id: string | null
+  folderid: string | null
   content: string
 }
 
@@ -22,19 +22,19 @@ export function saveNotebook(notebook: Notebook) {
     (notebookid, name, folderid, content)
     VALUES (?, ?, ?, ?)
     `)
-  stmt.run({
-    notebookid: notebook.notebookid,
-    name: notebook.name,
-    folderid: notebook.folderid || null,
-    content: JSON.stringify({
+  stmt.run(
+    notebook.notebookid,
+    notebook.name,
+    notebook.folderid ?? null,
+    JSON.stringify({
       blocks: notebook.blocks,
-    }),
-  })
+    })
+  )
 }
 
 export function loadNotebook(id: string): Notebook {
   const stmt = db.prepare(`
-    SELECT notebookid, name, folder_id, content
+    SELECT notebookid, name, folderid, content
     FROM notebooks
     WHERE notebookid = ?
   `)
@@ -48,7 +48,7 @@ export function loadNotebook(id: string): Notebook {
 
   const notebook = new Notebook(row.name)
   notebook.notebookid = row.notebookid
-  notebook.folderid = row.folder_id ?? undefined
+  notebook.folderid = row.folderid ?? undefined
   notebook.blocks = data.blocks ?? []
 
   return notebook

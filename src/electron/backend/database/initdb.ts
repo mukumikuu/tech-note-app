@@ -10,7 +10,7 @@ export function initDB() {
     CREATE TABLE IF NOT EXISTS notebooks (
       notebookid TEXT PRIMARY KEY,
       name TEXT NOT NULL,
-      folder_id TEXT,
+      folderid TEXT,
       content TEXT NOT NULL
     );
 

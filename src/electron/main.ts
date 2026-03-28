@@ -3,11 +3,17 @@ import path from 'path'
 import serverStart from './backend/server.js'
 import { isDev, logAppMemory, logMemory } from './util.js'
 import { initDB } from './backend/database/initdb.js'
+import { testDB } from './backend/database/testdb.js'
+import { testNotebookRepo } from './backend/database/notebookrepotest.js'
+import { dropDB } from './backend/database/dropdb.js'
 
 let mainWindow: BrowserWindow | null = null
 
 app.whenReady().then(async () => {
-  initDB() // ✅ ADD HERE
+  // dropDB() // uncommnet to reset DB during the development
+  initDB() //
+  testDB()
+  testNotebookRepo()
   console.log('✅ Database initialized')
 
   mainWindow = new BrowserWindow({
@@ -18,10 +24,10 @@ app.whenReady().then(async () => {
     },
   })
 
-  setInterval(() => {
-    logMemory()
-    logAppMemory(app)
-  }, 2500)
+  // setInterval(() => {
+  //   logMemory()
+  //   logAppMemory(app)
+  // }, 2500)
 
   if (isDev()) {
     mainWindow.loadURL('http://localhost:5123')
