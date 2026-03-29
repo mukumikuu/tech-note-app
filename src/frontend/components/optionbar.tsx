@@ -3,11 +3,16 @@ import Button from './button'
 import { FilterIcon, SearchIcon, Ellipsis } from 'lucide-react'
 
 interface OptionBarProps {
-  onAdd: (type: 'folder') => void
+  onAddFolder: (type: 'folder') => void
+  onAddNotebook: (type: 'notebook') => void
   onToggleSearch: () => void
 }
 
-const OptionBar = ({ onAdd, onToggleSearch }: OptionBarProps) => {
+const OptionBar = ({
+  onAddFolder,
+  onAddNotebook,
+  onToggleSearch,
+}: OptionBarProps) => {
   const [opened, setOpened] = useState(false)
   const handleFilter = () => {
     //TODO in sprint 6
@@ -40,7 +45,7 @@ const OptionBar = ({ onAdd, onToggleSearch }: OptionBarProps) => {
           <div className='absolute top-6'>
             <Button
               onClick={() => {
-                onAdd('folder')
+                onAddFolder('folder')
                 setOpened((prev) => !prev)
               }}
               variant='default'
@@ -49,6 +54,18 @@ const OptionBar = ({ onAdd, onToggleSearch }: OptionBarProps) => {
               className='font-poppins px-2 text-[10px] text-white'
             >
               Create New Folder
+            </Button>
+            <Button
+              onClick={() => {
+                onAddNotebook('notebook')
+                setOpened((prev) => !prev)
+              }}
+              variant='default'
+              rounded='lg'
+              iconSize={14}
+              className='font-poppins px-2 text-[10px] text-white'
+            >
+              Create New Notebook
             </Button>
           </div>
         )}

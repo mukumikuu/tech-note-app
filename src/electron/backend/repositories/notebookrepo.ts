@@ -115,3 +115,44 @@ export function searchAcrossNotebook(query: string): SearchResult[] {
     }
   })
 }
+
+export function getAllNotebooks(): Notebook[] {
+  const stmt = db.prepare(`
+    SELECT notebookid, name, folderid, content
+    FROM notebooks
+    `)
+  const rows = stmt.all() as NotebookRow[]
+  return rows.map((row) => {
+    const data = JSON.parse(row.content) as { blocks: Notebook['blocks'] }
+    const notebook = new Notebook(row.name)
+    notebook.notebookid = row.notebookid
+    notebook.folderid = row.folderid ?? undefined
+    notebook.blocks = data.blocks ?? []
+    return notebook
+  })
+}
+
+export function deleteNotebook(notebookId: string): void {
+  const stmt = db.prepare(`
+    DELETE FROM notebooks
+    WHERE notebookid = ?
+    `)
+  stmt.run(notebookId)
+}
+
+export function getNotebooksByFolder(folderId: string): Notebook[] {
+  const stmt = db.prepare(`
+    SELECT notebookid, name, folderid, content
+    FROM notebooks
+    WHERE folderid = ?
+    `)
+  const rows = stmt.all(folderId) as NotebookRow[]
+  return rows.map((row) => {
+    const data = JSON.parse(row.content) as { blocks: Notebook['blocks'] }
+    const notebook = new Notebook(row.name)
+    notebook.notebookid = row.notebookid
+    notebook.folderid = row.folderid ?? undefined
+    notebook.blocks = data.blocks ?? []
+    return notebook
+  })
+}

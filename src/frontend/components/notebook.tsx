@@ -14,18 +14,33 @@ import { useState, useEffect } from 'react'
 import { useSearch } from '../hooks/useSearch'
 import FileHeader from './fileheader'
 import { useKernels } from '../hooks/usekernel'
+import type NotebookClass from '../../shared/notebook'
+
 interface NotebookProps {
-  notebookId: string
+  notebook: NotebookClass
+  onNotebookUpdate: (notebook: NotebookClass) => void
 }
-const Notebook = ({ notebookId }: NotebookProps) => {
+
+const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
   const { blocks, addBlockAfter, reorderBlocks, removeBlock, updateBlock } =
-    useBlocks()
+    useBlocks(notebook.blocks, (updatedBlocks) => {
+      const updated = { ...notebook, blocks: updatedBlocks }
+      onNotebookUpdate(updated)
+    })
   const { runBlock, restartKernel, clearOutput, output } = useKernels()
   const [activeId, setActiveId] = useState<string | null>(null)
-  const [label, setLabel] = useState('untitled')
+  const [label, setLabel] = useState(notebook.name)
   const [isSearching, setIsSearching] = useState(false)
   const [query, setQuery] = useState('')
-  const { results, search } = useSearch(notebookId)
+  const { results, search } = useSearch(notebook.notebookid)
+
+  // Sync label changes back to notebook
+  useEffect(() => {
+    if (label !== notebook.name) {
+      const updated = { ...notebook, name: label }
+      onNotebookUpdate(updated)
+    }
+  }, [label, notebook, onNotebookUpdate])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
