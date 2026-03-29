@@ -12,30 +12,54 @@ import OptionBar from './optionbar'
 import SideBarElement from './sidebarelement'
 import SortableSidebarElement from './sortablesidebarelement'
 import Folder from '../../shared/folder'
+import Notebook from '../../shared/notebook'
 import TrashDropZone from './trashbar'
 import { useSearch } from '../hooks/useSearch'
 
 interface SidebarProps {
   folders: Folder[]
+  notebooks: Notebook[]
   setFolders: Dispatch<SetStateAction<Folder[]>>
   addFolder: (index: number, name: string) => void
   removeFolder: (id: string) => void
   reorderFolders: (activeId: string, overId: string) => void
+  onNotebookSelect?: (notebook: Notebook) => void
+  addNotebook: (name: string, folderId?: string) => void
 }
 
 const Sidebar = ({
   folders,
+  notebooks,
   setFolders,
   addFolder,
   removeFolder,
   reorderFolders,
+  onNotebookSelect,
+  addNotebook,
 }: SidebarProps) => {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [isSearching, setIsSearching] = useState(false)
   const [query, setQuery] = useState('')
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
   const { results, search } = useSearch()
 
   const isFolderOpened = folders.length > 0
+
+  const toggleFolderExpanded = (folderId: string) => {
+    setExpandedFolders((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(folderId)) {
+        newSet.delete(folderId)
+      } else {
+        newSet.add(folderId)
+      }
+      return newSet
+    })
+  }
+
+  const getNotebooksForFolder = (folderId: string) => {
+    return notebooks.filter((nb) => nb.folderid === folderId)
+  }
 
   function onDragStart(event: DragStartEvent) {
     setActiveId(event.active.id as string)
@@ -63,7 +87,8 @@ const Sidebar = ({
   return (
     <div className='bg-blue flex h-screen w-1/4 flex-col overflow-hidden px-2 py-2'>
       <OptionBar
-        onAdd={() => addFolder(0, 'untitled')}
+        onAddFolder={() => addFolder(0, 'untitled')}
+        onAddNotebook={() => addNotebook('untitled')}
         onToggleSearch={() => setIsSearching((prev) => !prev)}
       ></OptionBar>
       {isSearching && (
@@ -114,20 +139,40 @@ const Sidebar = ({
               >
                 <div className='flex flex-col gap-1'>
                   {folders.map((folder) => (
-                    <SortableSidebarElement
-                      key={folder.folderid}
-                      id={folder.folderid}
-                      name={folder.name}
-                      onRename={(name) =>
-                        setFolders((f: Folder[]) =>
-                          f.map((item) =>
-                            item.folderid === folder.folderid
-                              ? { ...item, name }
-                              : item
+                    <div key={folder.folderid}>
+                      <SortableSidebarElement
+                        id={folder.folderid}
+                        name={folder.name}
+                        isExpanded={expandedFolders.has(folder.folderid)}
+                        onToggleExpanded={() =>
+                          toggleFolderExpanded(folder.folderid)
+                        }
+                        onRename={(name) =>
+                          setFolders((f: Folder[]) =>
+                            f.map((item) =>
+                              item.folderid === folder.folderid
+                                ? { ...item, name }
+                                : item
+                            )
                           )
-                        )
-                      }
-                    />
+                        }
+                      />
+                      {expandedFolders.has(folder.folderid) && (
+                        <div className='mt-1 ml-4 flex flex-col gap-1'>
+                          {getNotebooksForFolder(folder.folderid).map(
+                            (notebook) => (
+                              <button
+                                key={notebook.notebookid}
+                                onClick={() => onNotebookSelect?.(notebook)}
+                                className='bg-dark-blue flex w-full rounded-sm px-2 py-1 text-left text-xs text-white transition-all duration-300 hover:brightness-125'
+                              >
+                                📓 {notebook.name}
+                              </button>
+                            )
+                          )}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </SortableContext>

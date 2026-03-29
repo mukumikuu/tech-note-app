@@ -1,12 +1,29 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
 import Block from '../../shared/block'
 import type { blockType } from '../../shared/block'
 import type { Language } from '../../shared/language'
-export const useBlocks = () => {
-  const [blocks, setBlocks] = useState<Block[]>([
-    { blockid: crypto.randomUUID(), type: 'markdown' },
-  ])
+
+export const useBlocks = (
+  initialBlocks?: Block[],
+  onBlocksChange?: (blocks: Block[]) => void
+) => {
+  const [blocks, setBlocksState] = useState<Block[]>(
+    initialBlocks && initialBlocks.length > 0
+      ? initialBlocks
+      : [{ blockid: crypto.randomUUID(), type: 'markdown' }]
+  )
+
+  // Sync blocks to callback when they change
+  const setBlocks = useCallback(
+    (newBlocks: Block[] | ((prev: Block[]) => Block[])) => {
+      const updatedBlocks =
+        typeof newBlocks === 'function' ? newBlocks(blocks) : newBlocks
+      setBlocksState(updatedBlocks)
+      onBlocksChange?.(updatedBlocks)
+    },
+    [blocks, onBlocksChange]
+  )
 
   const addBlockAfter = (index: number, type: blockType) => {
     setBlocks((prev) => {
