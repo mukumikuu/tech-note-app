@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import SideBarElement from './sidebarelement'
+import FolderElement from './folderelement'
 
 interface Props {
   id: string
@@ -10,7 +10,7 @@ interface Props {
   onRename: (value: string) => void
 }
 
-const SortableSidebarElement = ({
+const SortableFolderElement = ({
   id,
   name,
   isExpanded = false,
@@ -41,7 +41,7 @@ const SortableSidebarElement = ({
           {isExpanded ? '▼' : '▶'}
         </button>
         <div className='flex-1'>
-          <SideBarElement
+          <FolderElement
             label={name}
             onLabelChange={onRename}
             onClick={() => console.log('open', id)}
@@ -55,4 +55,4 @@ const SortableSidebarElement = ({
   )
 }
 
-export default SortableSidebarElement
+export default SortableFolderElement

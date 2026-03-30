@@ -37,6 +37,8 @@ function App() {
         addFolder={addFolder}
         removeFolder={removeFolder}
         reorderFolders={reorderFolders}
+        onNotebookSelect={handleNotebookSelect}
+        onNotebookRename={handleNotebookUpdate}
       />
       <div className='flex w-full flex-col px-4'>
         <>
@@ -48,6 +50,7 @@ function App() {
         </>
         {!open && notebook && (
           <Notebook
+            key={notebook.notebookid}
             notebook={notebook}
             onNotebookUpdate={handleNotebookUpdate}
           />

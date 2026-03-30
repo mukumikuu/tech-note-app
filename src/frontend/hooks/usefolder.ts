@@ -10,6 +10,8 @@ export const useFolders = () => {
       copy.splice(index + 1, 0, {
         folderid: crypto.randomUUID(),
         name: name,
+        folders: [],
+        notebooks: [],
       })
       return copy
     })

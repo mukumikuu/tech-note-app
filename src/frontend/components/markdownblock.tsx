@@ -9,11 +9,18 @@ import { useCopyToClipboard } from '../hooks/usecopytoclipboard'
 
 type MarkdownBlockProps = {
   id: string
+  content: string
+  onContentChange: (content: string) => void
   onAdd: (type: 'markdown' | 'code') => void
   onRemove: () => void
 }
-const MarkdownBlock = ({ id, onAdd, onRemove }: MarkdownBlockProps) => {
-  const [text, setText] = useState('Write something...')
+const MarkdownBlock = ({
+  id,
+  content,
+  onContentChange,
+  onAdd,
+  onRemove,
+}: MarkdownBlockProps) => {
   const [focused, setFocused] = useState<boolean>(false)
   const { copy, copied } = useCopyToClipboard()
 
@@ -33,7 +40,7 @@ const MarkdownBlock = ({ id, onAdd, onRemove }: MarkdownBlockProps) => {
   }
 
   const handleCopy = async () => {
-    await copy(text)
+    await copy(content)
     if (!copied) console.log('copy failed')
   }
 
@@ -86,8 +93,10 @@ const MarkdownBlock = ({ id, onAdd, onRemove }: MarkdownBlockProps) => {
           <textarea
             className='block field-sizing-content h-auto w-full font-mono text-white'
             style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
+            value={content}
+            onChange={(e) => {
+              onContentChange(e.target.value)
+            }}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
           />

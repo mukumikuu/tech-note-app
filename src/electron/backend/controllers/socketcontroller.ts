@@ -86,7 +86,7 @@ const socketHandlers = (socket: Socket, kernel: KernelManager) => {
   socket.on('notebook:update', async ({ notebook }) => {
     try {
       saveNotebook(notebook)
-      socket.emit('notebook:update', {
+      socket.emit('notebook:updated', {
         status: 'success',
         notebook,
       })

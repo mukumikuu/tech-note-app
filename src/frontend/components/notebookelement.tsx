@@ -1,35 +1,31 @@
-import type { LucideIcon } from 'lucide-react'
-import React, { useState } from 'react'
+import { NotebookIcon } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
 import '../ui/index.css'
 import type { DraggableSyntheticListeners } from '@dnd-kit/core'
-import dragger from '../ui/assets/picture/dragger.svg'
 
 interface ElementProps {
   label: string
   onLabelChange?: (value: string) => void
   onClick: () => void
   className?: string
-  icon?: LucideIcon
-  iconSize?: number
-  iconColor?: string
-  iconClassname?: string
   dragListeners?: DraggableSyntheticListeners
   isDragging?: boolean
 }
 
-const SideBarElement: React.FC<ElementProps> = ({
+const NotebookElement: React.FC<ElementProps> = ({
   label,
   onLabelChange,
   onClick,
   className = '',
-  icon: Icon,
-  iconSize = 18,
-  iconColor = 'var(--color-white)',
-  iconClassname = '',
   dragListeners,
 }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [text, setText] = useState(label)
+  useEffect(() => {
+    if (!isEditing) {
+      setText(label)
+    }
+  }, [label, isEditing])
 
   const handleBlur = () => {
     setIsEditing(false)
@@ -44,16 +40,13 @@ const SideBarElement: React.FC<ElementProps> = ({
       className={`${baseClasses} ${className}`}
       onClick={() => !isEditing && onClick()}
     >
-      {Icon && (
-        <Icon size={iconSize} color={iconColor} className={iconClassname} />
-      )}
-      <div
+      <NotebookIcon
+        size={20}
+        color='white'
         {...(dragListeners ?? {})}
-        className='cursor-grab px-1'
+        className='shrink-0 cursor-grab px-1'
         onClick={(e) => e.stopPropagation()}
-      >
-        <img src={dragger} alt='||' className='h-4 w-4' />
-      </div>
+      ></NotebookIcon>
       {isEditing ? (
         <input
           autoFocus
@@ -76,4 +69,4 @@ const SideBarElement: React.FC<ElementProps> = ({
   )
 }
 
-export default SideBarElement
+export default NotebookElement

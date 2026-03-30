@@ -36,11 +36,15 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
 
   // Sync label changes back to notebook
   useEffect(() => {
+    setLabel(notebook.name)
+  }, [notebook.notebookid, notebook.name])
+
+  useEffect(() => {
     if (label !== notebook.name) {
       const updated = { ...notebook, name: label }
       onNotebookUpdate(updated)
     }
-  }, [label, notebook, onNotebookUpdate])
+  }, [label])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -138,6 +142,10 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
                 <MarkdownBlock
                   key={block.blockid}
                   id={block.blockid}
+                  content={block.content!}
+                  onContentChange={(val) =>
+                    updateBlock(block.blockid, { content: val })
+                  }
                   onAdd={(type) => addBlockAfter(index, type)}
                   onRemove={() => removeBlock(block.blockid)}
                 />
@@ -151,9 +159,15 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
                   onContentChange={(val) =>
                     updateBlock(block.blockid, { content: val })
                   }
-                  onLangChange={(lang) =>
+                  onLangChange={(lang) => {
+                    console.log(
+                      '[DEBUG-Notebook] onLangChange called with:',
+                      lang,
+                      'for block:',
+                      block.blockid
+                    )
                     updateBlock(block.blockid, { language: lang })
-                  }
+                  }}
                   onAdd={(type) => addBlockAfter(index, type)}
                   onRemove={() => removeBlock(block.blockid)}
                   onExecute={runBlock}
@@ -168,6 +182,8 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
             activeBlock.type === 'markdown' ? (
               <MarkdownBlock
                 id={activeBlock.blockid}
+                content={activeBlock.content!}
+                onContentChange={() => {}}
                 onAdd={() => {}}
                 onRemove={() => {}}
               />
