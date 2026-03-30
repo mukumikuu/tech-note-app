@@ -9,12 +9,16 @@ import {
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import OptionBar from './optionbar'
-import SideBarElement from './sidebarelement'
-import SortableSidebarElement from './sortablesidebarelement'
+import FolderElement from './folderelement'
+import SortableFolderElement from './sortablefolderelement'
 import Folder from '../../shared/folder'
 import Notebook from '../../shared/notebook'
 import TrashDropZone from './trashbar'
 import { useSearch } from '../hooks/useSearch'
+import type { SidebarItem } from '../types/sidebaritem'
+import { useSidebar } from '../utils/sidebartree'
+import NotebookClass from '../../shared/notebook'
+import SortableNotebookElement from './sortablenotebookelement'
 
 interface SidebarProps {
   folders: Folder[]
@@ -23,7 +27,8 @@ interface SidebarProps {
   addFolder: (index: number, name: string) => void
   removeFolder: (id: string) => void
   reorderFolders: (activeId: string, overId: string) => void
-  onNotebookSelect?: (notebook: Notebook) => void
+  onNotebookSelect?: (notebookId: string) => void
+  onNotebookRename?: (notebook: NotebookClass) => void
   addNotebook: (name: string, folderId?: string) => void
 }
 
@@ -36,29 +41,25 @@ const Sidebar = ({
   reorderFolders,
   onNotebookSelect,
   addNotebook,
+  onNotebookRename,
 }: SidebarProps) => {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [isSearching, setIsSearching] = useState(false)
   const [query, setQuery] = useState('')
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
   const { results, search } = useSearch()
-
-  const isFolderOpened = folders.length > 0
-
-  const toggleFolderExpanded = (folderId: string) => {
+  const { tree } = useSidebar(folders, notebooks)
+  const hasContent = folders.length > 0 || notebooks.length > 0
+  const toggleFolderExpanded = (id: string) => {
     setExpandedFolders((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(folderId)) {
-        newSet.delete(folderId)
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
       } else {
-        newSet.add(folderId)
+        next.add(id)
       }
-      return newSet
+      return next
     })
-  }
-
-  const getNotebooksForFolder = (folderId: string) => {
-    return notebooks.filter((nb) => nb.folderid === folderId)
   }
 
   function onDragStart(event: DragStartEvent) {
@@ -73,24 +74,61 @@ const Sidebar = ({
       setActiveId(null)
       return
     }
-    if (active.id === over!.id) return
-    reorderFolders(active.id as string, over!.id as string)
+    if (active.id !== over.id) {
+      reorderFolders(active.id as string, over.id as string)
+    }
     setActiveId(null)
   }
 
   function onDragCancel() {
     setActiveId(null)
   }
-
   const activeFolder = folders.find((f) => f.folderid === activeId)
+  const renderItem = (item: SidebarItem, depth = 0): React.ReactNode => {
+    if (item.type === 'folder') {
+      return (
+        <div key={item.id}>
+          <SortableFolderElement
+            id={item.id}
+            name={item.name}
+            isExpanded={expandedFolders.has(item.id)}
+            onToggleExpanded={() => toggleFolderExpanded(item.id)}
+            onRename={(name) =>
+              setFolders((prev) =>
+                prev.map((f) => (f.folderid === item.id ? { ...f, name } : f))
+              )
+            }
+          />
+          {expandedFolders.has(item.id) && (
+            <div className='ml-4 flex flex-col gap-1'>
+              {item.children.map((child) => renderItem(child, depth + 1))}
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    return (
+      <div key={item.id}>
+        <SortableNotebookElement
+          id={item.id}
+          name={item.name}
+          onClick={() => onNotebookSelect?.(item.data.notebookid)}
+          onRename={(label) =>
+            onNotebookRename?.({ ...item.data, name: label })
+          }
+        ></SortableNotebookElement>
+      </div>
+    )
+  }
 
   return (
     <div className='bg-blue flex h-screen w-1/4 flex-col overflow-hidden px-2 py-2'>
       <OptionBar
         onAddFolder={() => addFolder(0, 'untitled')}
-        onAddNotebook={() => addNotebook('untitled')}
+        onAddNotebook={() => addNotebook('untitled', folders[0]?.folderid)}
         onToggleSearch={() => setIsSearching((prev) => !prev)}
-      ></OptionBar>
+      />
       {isSearching && (
         <input
           className='mt-2 text-sm text-white'
@@ -103,7 +141,7 @@ const Sidebar = ({
           }}
         />
       )}
-      {!isFolderOpened && (
+      {!hasContent && (
         <div className='font-poppins pt-2 text-center text-sm text-white'>
           NO FOLDER OPENED
         </div>
@@ -122,7 +160,7 @@ const Sidebar = ({
           ))}
         </div>
       ) : (
-        isFolderOpened && (
+        hasContent && (
           <>
             <div className='font-poppins gap-2 pt-2 pb-2 text-left text-sm text-white'>
               FOLDERS
@@ -134,57 +172,22 @@ const Sidebar = ({
               onDragCancel={onDragCancel}
             >
               <SortableContext
-                items={folders.map((f) => f.folderid)}
+                items={tree.map((t) => t.id)}
                 strategy={verticalListSortingStrategy}
               >
                 <div className='flex flex-col gap-1'>
-                  {folders.map((folder) => (
-                    <div key={folder.folderid}>
-                      <SortableSidebarElement
-                        id={folder.folderid}
-                        name={folder.name}
-                        isExpanded={expandedFolders.has(folder.folderid)}
-                        onToggleExpanded={() =>
-                          toggleFolderExpanded(folder.folderid)
-                        }
-                        onRename={(name) =>
-                          setFolders((f: Folder[]) =>
-                            f.map((item) =>
-                              item.folderid === folder.folderid
-                                ? { ...item, name }
-                                : item
-                            )
-                          )
-                        }
-                      />
-                      {expandedFolders.has(folder.folderid) && (
-                        <div className='mt-1 ml-4 flex flex-col gap-1'>
-                          {getNotebooksForFolder(folder.folderid).map(
-                            (notebook) => (
-                              <button
-                                key={notebook.notebookid}
-                                onClick={() => onNotebookSelect?.(notebook)}
-                                className='bg-dark-blue flex w-full rounded-sm px-2 py-1 text-left text-xs text-white transition-all duration-300 hover:brightness-125'
-                              >
-                                📓 {notebook.name}
-                              </button>
-                            )
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                  {tree.map((item: SidebarItem) => renderItem(item))}
                 </div>
               </SortableContext>
-              <TrashDropZone></TrashDropZone>
+              <TrashDropZone />
               <DragOverlay>
-                {activeFolder ? (
-                  <SideBarElement
+                {activeFolder && (
+                  <FolderElement
                     label={activeFolder.name}
                     onClick={() => {}}
                     className='opacity-100'
                   />
-                ) : null}
+                )}
               </DragOverlay>
             </DndContext>
           </>

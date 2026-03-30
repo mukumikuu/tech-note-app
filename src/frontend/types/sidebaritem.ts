@@ -1,0 +1,14 @@
+import Notebook from '../../shared/notebook'
+export type SidebarItem =
+  | {
+      type: 'folder'
+      id: string
+      name: string
+      children: SidebarItem[]
+    }
+  | {
+      type: 'notebook'
+      id: string
+      name: string
+      data: Notebook
+    }
