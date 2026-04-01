@@ -1,34 +1,38 @@
 import { useEffect, useState } from 'react'
 import { socket } from '../utils/socket'
 import type { CellStatus } from '../../shared/cellstatus'
-import type { SearchResult } from '../../shared/searchResult'
+import type {
+  SearchResult,
+  SearchResultsEvent,
+} from '../../shared/searchResult'
 
 export function useSearch(notebookId?: string) {
   const [results, setResults] = useState<SearchResult[]>([])
   const [status, setStatus] = useState<CellStatus>('idle')
   const [errors, setErrors] = useState<string>('')
+  const searchHandler = (data: SearchResultsEvent) => {
+    if (data.status === 'success') {
+      setResults(data.results)
+      setErrors('')
+      setStatus('success')
+      setTimeout(() => {
+        setStatus('idle')
+      }, 300)
+    } else {
+      setErrors(data.error)
+      setResults([])
+      setStatus('error')
+      setTimeout(() => {}, 300)
+    }
+  }
   useEffect(() => {
     socket.on('connect', () => {
       console.log('connected to search system')
     })
-    socket.on('searchResults', (data) => {
-      if (data.success) {
-        setResults(data.results)
-        setErrors('')
-        setStatus('success')
-        setTimeout(() => {
-          setStatus('idle')
-        }, 300)
-      } else {
-        setErrors(data.error)
-        setResults([])
-        setStatus('error')
-        setTimeout(() => {}, 300)
-      }
-    })
+    socket.on('searchResults', searchHandler)
     return () => {
       socket.off('connect')
-      socket.off('searchResults')
+      socket.off('searchResults', searchHandler)
     }
   }, [])
 

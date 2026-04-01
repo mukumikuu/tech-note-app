@@ -9,3 +9,7 @@ type Match = {
   type: 'code' | 'markdown'
   snippet: string
 }
+
+export type SearchResultsEvent =
+  | { status: 'success'; results: SearchResult[]; query: string }
+  | { status: 'error'; error: string; query: string }
