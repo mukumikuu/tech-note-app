@@ -3,21 +3,21 @@ import type { KernelResult } from '../../shared/kernelResult'
 import type { Language } from '../../shared/language'
 import Block from '../../shared/block'
 import { socket } from '../utils/socket'
+import type { CodeResponse } from '../types/response'
 
 export function useKernels() {
   const [output, setOutput] = useState<Record<string, KernelResult>>({})
-
+  const codeHandler = ({ id, result }: CodeResponse) => {
+    setOutput((prev) => ({ ...prev, [id]: result }))
+  }
   useEffect(() => {
     socket.on('connect', () => {
       console.log('connected to kernel manager')
     })
-    socket.on('codeResult', ({ id, result }) => {
-      console.log(result)
-      setOutput((prev) => ({ ...prev, [id]: result }))
-    })
+    socket.on('codeResult', codeHandler)
     return () => {
       socket.off('connect')
-      socket.off('codeResult')
+      socket.off('codeResult', codeHandler)
     }
   }, [])
 

@@ -143,7 +143,6 @@ const CodeBlock = ({
 
   const handleRemove = () => {
     onRemove()
-    console.log(`${id} is removed`)
   }
 
   return (
