@@ -1,3 +1,4 @@
+import type { KernelResult } from '../../shared/kernelResult'
 import Notebook from '../../shared/notebook'
 export type NotebookResponse =
   | { status: 'success'; notebook: Notebook }
@@ -8,3 +9,7 @@ export type NotebooksResponse =
 export type DeleteResponse =
   | { status: 'success' }
   | { status: 'error'; error: string }
+export type CodeResponse = {
+  id: string
+  result: KernelResult
+}

@@ -11,18 +11,29 @@ export const useBlocks = (
   const [blocks, setBlocksState] = useState<Block[]>(
     initialBlocks && initialBlocks.length > 0
       ? initialBlocks
-      : [{ blockid: crypto.randomUUID(), type: 'markdown' }]
+      : [
+          {
+            blockid: crypto.randomUUID(),
+            type: 'markdown',
+            content: 'Write Something...',
+          },
+        ]
   )
 
-  // Sync blocks to callback when they change
   const setBlocks = useCallback(
     (newBlocks: Block[] | ((prev: Block[]) => Block[])) => {
-      const updatedBlocks =
-        typeof newBlocks === 'function' ? newBlocks(blocks) : newBlocks
-      setBlocksState(updatedBlocks)
-      onBlocksChange?.(updatedBlocks)
+      if (typeof newBlocks === 'function') {
+        setBlocksState((prev) => {
+          const updatedBlocks = newBlocks(prev)
+          onBlocksChange?.(updatedBlocks)
+          return updatedBlocks
+        })
+      } else {
+        setBlocksState(newBlocks)
+        onBlocksChange?.(newBlocks)
+      }
     },
-    [blocks, onBlocksChange]
+    [onBlocksChange]
   )
 
   const addBlockAfter = (index: number, type: blockType) => {
