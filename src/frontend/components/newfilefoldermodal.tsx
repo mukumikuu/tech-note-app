@@ -5,7 +5,9 @@ import NewFileButton from './newfilebutton'
 interface NewFileFolderModalProps {
   isOpen: boolean
   onClose: () => void
-  addFolder: (index: number, name: string) => void
+  onNewFile: () => void
+  onNewFolder: () => void
+  // addFolder: (index: number, name: string) => void
   title?: string
   description?: string
 }
@@ -13,14 +15,11 @@ interface NewFileFolderModalProps {
 const NewFileFolderModal = ({
   isOpen,
   onClose,
-  addFolder,
+  onNewFile,
+  onNewFolder,
 }: NewFileFolderModalProps) => {
   if (!isOpen) return null
 
-  const handleCreateFolder = () => {
-    addFolder(0, 'untitled')
-    onClose()
-  }
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center'>
       {/* Overlay */}
@@ -34,15 +33,15 @@ const NewFileFolderModal = ({
         className='relative w-[360px] rounded-2xl bg-zinc-900 p-6 text-white shadow-2xl'
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className='mb-4 text-xl font-semibold'>Welcome to Tech Note !</h2>
+        <h2 className='mb-4 text-xl font-semibold'>Welcome to Sniply ! 👋</h2>
 
         <p className='mb-6 text-sm text-zinc-400'>
           Start by creating a new folder or file.
         </p>
 
         <div className='flex flex-col gap-3'>
-          <NewFileButton />
-          <CreateFolderButton onClick={handleCreateFolder} />
+          <NewFileButton onClick={onNewFile} />
+          <CreateFolderButton onClick={onNewFolder} />
         </div>
       </div>
     </div>
