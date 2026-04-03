@@ -111,32 +111,3 @@ function App() {
   )
 }
 export default App
-
-// import NameModal from '../components/namemodal'
-// import NewFileFolderModal from '../components/newfilefoldermodal'
-// function App() {
-//   return (
-//     <div className='flex w-full flex-row'>
-//       <div className='flex w-full flex-col px-4'>
-//         {/* <NewFileFolderModal
-//           isOpen={true}
-//           onClose={() => {}}
-//           addFolder={(index, name) => {
-//             console.log('Added folder:', index, name)
-//           }}
-//         /> */}
-//         <NameModal
-//           isOpen={true}
-//           onClose={() => {}}
-//           onSubmit={(name) => {
-//             console.log('Submitted file name:', name)
-//           }}
-//           topic='Create New File 📓'
-//           placeholder='Enter file name ...'
-//         />
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default App
