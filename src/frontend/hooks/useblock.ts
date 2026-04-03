@@ -75,9 +75,7 @@ export const useBlocks = (
     data: Partial<{ content: string; language: Language }>
   ) => {
     setBlocks((prev) =>
-      prev.map((b) =>
-        b.blockid === id && b.type === 'code' ? { ...b, ...data } : b
-      )
+      prev.map((b) => (b.blockid === id ? { ...b, ...data } : b))
     )
   }
 
