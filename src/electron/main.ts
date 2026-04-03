@@ -10,7 +10,7 @@ import { dropDB } from './backend/database/dropdb.js'
 let mainWindow: BrowserWindow | null = null
 
 app.whenReady().then(async () => {
-  // dropDB() // uncommnet to reset DB during the development
+  dropDB() // uncommnet to reset DB during the development
   initDB() //
   testDB()
   testNotebookRepo()
