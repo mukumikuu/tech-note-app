@@ -12,6 +12,7 @@ export const useFolders = () => {
         name: name,
         folders: [],
         notebooks: [],
+        parentFolderId: undefined,
       })
       return copy
     })
@@ -23,11 +24,37 @@ export const useFolders = () => {
 
   const reorderFolders = (activeId: string, overId: string) => {
     if (activeId === overId) return
-    const oldIndex = folders.findIndex((b) => b.folderid === activeId)
-    const newIndex = folders.findIndex((b) => b.folderid === overId)
-    setFolders((folders) => {
-      return arrayMove(folders, oldIndex, newIndex)
+    setFolders((prev) => {
+      const activeFolder = prev.find((f) => f.folderid === activeId)
+      if (!activeFolder) return prev
+      const parentId = activeFolder.parentFolderId ?? null
+      const siblings = prev.filter(
+        (f) => (f.parentFolderId ?? null) === parentId
+      )
+      const others = prev.filter((f) => (f.parentFolderId ?? null) !== parentId)
+      const oldIndex = siblings.findIndex((f) => f.folderid === activeId)
+      const newIndex = siblings.findIndex((f) => f.folderid === overId)
+      if (oldIndex === -1 || newIndex === -1) return prev
+      const reordered = arrayMove(siblings, oldIndex, newIndex)
+      const firstIdx = prev.findIndex(
+        (f) => (f.parentFolderId ?? null) === parentId
+      )
+      return [
+        ...others.slice(0, firstIdx),
+        ...reordered,
+        ...others.slice(firstIdx),
+      ]
     })
+  }
+
+  const reparentFolder = (folderId: string, newParentId: string | null) => {
+    setFolders((prev) =>
+      prev.map((f) =>
+        f.folderid === folderId
+          ? { ...f, parentFolderId: newParentId ?? undefined }
+          : f
+      )
+    )
   }
 
   return {
@@ -36,5 +63,6 @@ export const useFolders = () => {
     addFolder,
     removeFolder,
     reorderFolders,
+    reparentFolder,
   }
 }

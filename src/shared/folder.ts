@@ -8,10 +8,12 @@ class Folder {
   public name: string
   public folders: Folder[] = []
   public notebooks: Notebook[] = []
+  public parentFolderId?: string
 
-  public constructor(name: string) {
+  public constructor(name: string, parentFolderId?: string) {
     this.folderid = crypto.randomUUID()
     this.name = name
+    this.parentFolderId = parentFolderId
   }
 }
 
