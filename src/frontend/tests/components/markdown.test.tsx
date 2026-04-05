@@ -13,8 +13,15 @@ describe('markdown', () => {
   const setup = () => {
     const onAdd = jest.fn()
     const onRemove = jest.fn()
+    const onContentChange = jest.fn()
     render(
-      <MarkdownBlock id='a' onAdd={onAdd} onRemove={onRemove}></MarkdownBlock>
+      <MarkdownBlock
+        id='a'
+        onAdd={onAdd}
+        onRemove={onRemove}
+        content='Write Something...'
+        onContentChange={onContentChange}
+      ></MarkdownBlock>
     )
     return { onAdd, onRemove }
   }
@@ -39,7 +46,7 @@ describe('markdown', () => {
 
   it('C29-Verify markdown text can be edited', () => {
     setup()
-    const test = 'hello world'
+    const test = 'Write Something...'
     const text = screen.getByRole('textbox')
     fireEvent.change(text, { target: { value: test } })
     expect(text).toHaveValue(test)
