@@ -6,14 +6,25 @@ import { initDB } from './backend/database/initdb.js'
 import { testDB } from './backend/database/testdb.js'
 import { testNotebookRepo } from './backend/database/notebookrepotest.js'
 import { dropDB } from './backend/database/dropdb.js'
+import fs from 'fs'
 
 let mainWindow: BrowserWindow | null = null
+const logFile = path.join(app.getPath('userData'), 'debug.log')
+const log = (...args: string[]) => {
+  const line = `[${new Date().toISOString()}] ${args.join(' ')}\n`
+  fs.appendFileSync(logFile, line)
+  console.log(...args)
+}
 
 app.whenReady().then(async () => {
+  log('=== APP STARTED ===')
+  log('isPackaged:', `${app.isPackaged}`)
+  log('resourcesPath:', process.resourcesPath)
+  log('appPath:', app.getAppPath())
   dropDB() // uncommnet to reset DB during the development
   initDB() //
-  testDB()
-  testNotebookRepo()
+  // testDB()
+  // testNotebookRepo()
   console.log('✅ Database initialized')
 
   mainWindow = new BrowserWindow({

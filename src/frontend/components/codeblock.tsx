@@ -22,6 +22,7 @@ import {
   darkEditorLegacy,
 } from '../features/syntaxhighlight/editortheme'
 import LanguageButton from './languagebutton'
+import type { EditorDiv } from '../../test/types/editor'
 
 type CodeBlockProps = {
   id: string
@@ -50,7 +51,7 @@ const CodeBlock = ({
 }: CodeBlockProps) => {
   const [status, setStatus] = useState<CellStatus>('idle')
   const { copy, copied } = useCopyToClipboard()
-  const editorRef = useRef<HTMLDivElement | null>(null)
+  const editorRef = useRef<EditorDiv | null>(null)
   const viewRef = useRef<EditorView | null>(null)
   const {
     attributes,

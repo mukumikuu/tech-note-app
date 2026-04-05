@@ -1,6 +1,14 @@
 {
   "appId": "com.seniorproject.technoteapp",
   "files": ["dist-electron", "dist-react"],
+  "asarUnpack": [
+    "dist-electron/electron/backend/**",
+    "node_modules/better-sqlite3/**",
+    "node_modules/esbuild/**",
+    "node_modules/@esbuild/**",
+    "node_modules/socket.io/**",
+    "node_modules/socket.io-client/**"
+  ],
   "mac": {
     "target": "dmg"
   },
@@ -9,6 +17,7 @@
     "category": "Utility"
   },
   "win": {
+    "icon": "./src/frontend/ui/assets/Logo.png",
     "target": ["portable", "msi"]
   }
 }

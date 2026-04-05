@@ -1,5 +1,9 @@
 {
   "name": "tech-note-app",
+  "description": "Tech Note App",
+  "author": {
+    "name": "Mukmik & Paopao"
+  },
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -39,6 +43,7 @@
     "@tailwindcss/vite": "^4.1.18",
     "better-sqlite3": "^12.6.2",
     "codemirror": "^6.0.2",
+    "esbuild": "^0.28.0",
     "lucide-react": "^0.563.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
