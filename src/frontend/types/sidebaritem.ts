@@ -4,6 +4,7 @@ export type SidebarItem =
       type: 'folder'
       id: string
       name: string
+      parentFolderId?: string
       children: SidebarItem[]
     }
   | {

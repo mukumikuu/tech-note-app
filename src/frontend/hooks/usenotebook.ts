@@ -7,6 +7,7 @@ import type {
   NotebookResponse,
   NotebooksResponse,
 } from '../types/response'
+import { arrayMove } from '@dnd-kit/sortable'
 
 interface UseNotebookReturn {
   notebook: Notebook | null
@@ -20,6 +21,11 @@ interface UseNotebookReturn {
   deleteNotebook: (notebookId: string) => void
   listAllNotebooks: () => void
   listNotebooksByFolder: (folderId: string) => void
+  reorderNotebooks: (
+    activeId: string,
+    overId: string,
+    currentFolderId: string
+  ) => void
 }
 
 export function useNotebook(notebookId?: string): UseNotebookReturn {
@@ -183,6 +189,7 @@ export function useNotebook(notebookId?: string): UseNotebookReturn {
     setLoading(true)
     setStatus('running')
     socket.emit('notebook:delete', { notebookId: id })
+    setNotebooks((prev) => prev.filter((n) => n.notebookid !== id))
   }
 
   const listAllNotebooks = () => {
@@ -197,6 +204,31 @@ export function useNotebook(notebookId?: string): UseNotebookReturn {
     socket.emit('notebook:listByFolder', { folderId })
   }
 
+  const reorderNotebooks = (
+    activeId: string,
+    overId: string,
+    currentFolderId: string
+  ) => {
+    if (activeId === overId) return
+    setNotebooks((prev) => {
+      const siblings = prev.filter(
+        (n) => (n.folderid ?? null) === currentFolderId
+      )
+      const oldIndex = siblings.findIndex((n) => n.notebookid === activeId)
+      const newIndex = siblings.findIndex((n) => n.notebookid === overId)
+      if (oldIndex === -1 || newIndex === -1) return prev
+      const reordered = arrayMove(siblings, oldIndex, newIndex)
+      const siblingIds = new Set(siblings.map((n) => n.notebookid))
+      const others = prev.filter((n) => !siblingIds.has(n.notebookid))
+      const firstIdx = prev.findIndex((n) => siblingIds.has(n.notebookid))
+      return [
+        ...others.slice(0, firstIdx),
+        ...reordered,
+        ...others.slice(firstIdx),
+      ]
+    })
+  }
+
   return {
     notebook,
     notebooks,
@@ -209,5 +241,6 @@ export function useNotebook(notebookId?: string): UseNotebookReturn {
     deleteNotebook,
     listAllNotebooks,
     listNotebooksByFolder,
+    reorderNotebooks,
   }
 }

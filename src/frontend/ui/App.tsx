@@ -14,10 +14,23 @@ function App() {
   const [selectedNotebookId, setSelectedNotebookId] = useState<string | null>(
     null
   )
-  const { folders, setFolders, addFolder, removeFolder, reorderFolders } =
-    useFolders()
-  const { notebook, notebooks, getNotebook, updateNotebook, createNotebook } =
-    useNotebook(selectedNotebookId || undefined)
+  const {
+    folders,
+    setFolders,
+    addFolder,
+    removeFolder,
+    reorderFolders,
+    reparentFolder,
+  } = useFolders()
+  const {
+    notebook,
+    notebooks,
+    getNotebook,
+    updateNotebook,
+    createNotebook,
+    deleteNotebook,
+    reorderNotebooks,
+  } = useNotebook(selectedNotebookId || undefined)
 
   const handleNotebookSelect = (notebookId: string) => {
     setSelectedNotebookId(notebookId)
@@ -64,8 +77,11 @@ function App() {
         addFolder={addFolder}
         removeFolder={removeFolder}
         reorderFolders={reorderFolders}
+        reparentFolder={reparentFolder}
         onNotebookSelect={handleNotebookSelect}
-        onNotebookRename={handleNotebookUpdate}
+        removeNotebook={deleteNotebook}
+        onNotebookUpdate={handleNotebookUpdate}
+        reorderNotebooks={reorderNotebooks}
       />
       <div className='flex w-full flex-col px-4'>
         <>

@@ -9,16 +9,16 @@ import {
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import OptionBar from './optionbar'
-import FolderElement from './folderelement'
 import SortableFolderElement from './sortablefolderelement'
 import Folder from '../../shared/folder'
 import Notebook from '../../shared/notebook'
 import TrashDropZone from './trashbar'
 import { useSearch } from '../hooks/useSearch'
 import type { SidebarItem } from '../types/sidebaritem'
-import { useSidebar } from '../utils/sidebartree'
+import { useSidebar } from '../hooks/usesidebar'
 import NotebookClass from '../../shared/notebook'
 import SortableNotebookElement from './sortablenotebookelement'
+import FolderDropZone from './folderdropzone'
 
 interface SidebarProps {
   folders: Folder[]
@@ -27,9 +27,16 @@ interface SidebarProps {
   addFolder: (index: number, name: string) => void
   removeFolder: (id: string) => void
   reorderFolders: (activeId: string, overId: string) => void
+  reparentFolder: (folderId: string, newParentId: string | null) => void
   onNotebookSelect?: (notebookId: string) => void
-  onNotebookRename?: (notebook: NotebookClass) => void
+  onNotebookUpdate?: (notebook: NotebookClass) => void
   addNotebook: (name: string, folderId?: string) => void
+  removeNotebook: (notebookId: string) => void
+  reorderNotebooks: (
+    activeId: string,
+    overId: string,
+    currentFolderId: string
+  ) => void
 }
 
 const Sidebar = ({
@@ -39,16 +46,28 @@ const Sidebar = ({
   addFolder,
   removeFolder,
   reorderFolders,
+  reparentFolder,
   onNotebookSelect,
   addNotebook,
-  onNotebookRename,
+  onNotebookUpdate,
+  reorderNotebooks,
+  removeNotebook,
 }: SidebarProps) => {
-  const [activeId, setActiveId] = useState<string | null>(null)
   const [isSearching, setIsSearching] = useState(false)
-  const [query, setQuery] = useState('')
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
   const { results, search } = useSearch()
-  const { tree } = useSidebar(folders, notebooks)
+  const {
+    activeFolder,
+    activeNotebook,
+    activeId,
+    allSortableIds,
+    tree,
+    query,
+    setActiveId,
+    setQuery,
+    isDescendant,
+    getTargetFolderId,
+  } = useSidebar(folders, notebooks)
   const hasContent = folders.length > 0 || notebooks.length > 0
   const toggleFolderExpanded = (id: string) => {
     setExpandedFolders((prev) => {
@@ -69,21 +88,56 @@ const Sidebar = ({
   function onDragEnd(event: DragEndEvent) {
     const { active, over } = event
     if (!over) return
-    if (over.id === 'drop-zone') {
-      removeFolder(active.id as string)
+    const activeIdStr = active.id as string
+    const overIdStr = over.id as string
+    const isActiveFolder = folders.some((f) => f.folderid === activeIdStr)
+    const isActiveNotebook = notebooks.some((n) => n.notebookid === activeIdStr)
+    if (overIdStr === 'drop-zone') {
+      if (isActiveFolder) {
+        removeFolder(activeIdStr)
+      }
+      if (isActiveNotebook) {
+        removeNotebook(activeIdStr)
+      }
       setActiveId(null)
       return
     }
-    if (active.id !== over.id) {
-      reorderFolders(active.id as string, over.id as string)
+    const targetFolderId = getTargetFolderId(overIdStr)
+    if (isActiveFolder) {
+      if (
+        targetFolderId &&
+        targetFolderId !== activeIdStr &&
+        !isDescendant(targetFolderId, activeIdStr)
+      ) {
+        const currentParent = activeFolder?.parentFolderId ?? null
+        if (targetFolderId !== currentParent) {
+          reparentFolder(activeIdStr, targetFolderId)
+          if (targetFolderId) {
+            setExpandedFolders((prev) => new Set(prev).add(targetFolderId))
+          }
+        } else if (activeIdStr !== overIdStr) {
+          reorderFolders(activeIdStr, targetFolderId)
+        }
+      }
+      return
     }
-    setActiveId(null)
+    if (isActiveNotebook) {
+      const currentFolderId = activeNotebook?.folderid ?? null
+      const isDroppedOnFolder = overIdStr.startsWith('folder-drop:')
+      const isSameParent = targetFolderId === currentFolderId
+      if (!isSameParent) {
+        onNotebookUpdate?.({
+          ...activeNotebook!,
+          folderid: targetFolderId ?? undefined,
+        })
+      } else if (!isDroppedOnFolder && activeIdStr !== overIdStr) {
+        reorderNotebooks?.(activeIdStr, overIdStr, currentFolderId)
+      }
+    }
   }
-
   function onDragCancel() {
     setActiveId(null)
   }
-  const activeFolder = folders.find((f) => f.folderid === activeId)
   const renderItem = (item: SidebarItem, depth = 0): React.ReactNode => {
     if (item.type === 'folder') {
       return (
@@ -99,8 +153,12 @@ const Sidebar = ({
               )
             }
           />
+          <FolderDropZone folderId={item.id} isDragging={activeId !== null} />
           {expandedFolders.has(item.id) && (
-            <div className='ml-4 flex flex-col gap-1'>
+            <div
+              style={{ marginLeft: `${(depth + 1) * 2}px` }}
+              className='flex flex-col gap-1'
+            >
               {item.children.map((child) => renderItem(child, depth + 1))}
             </div>
           )}
@@ -115,7 +173,7 @@ const Sidebar = ({
           name={item.name}
           onClick={() => onNotebookSelect?.(item.data.notebookid)}
           onRename={(label) =>
-            onNotebookRename?.({ ...item.data, name: label })
+            onNotebookUpdate?.({ ...item.data, name: label })
           }
         ></SortableNotebookElement>
       </div>
@@ -126,7 +184,7 @@ const Sidebar = ({
     <div className='bg-blue flex h-screen w-1/4 flex-col overflow-hidden px-2 py-2'>
       <OptionBar
         onAddFolder={() => addFolder(0, 'untitled')}
-        onAddNotebook={() => addNotebook('untitled', folders[0]?.folderid)}
+        onAddNotebook={() => addNotebook('untitled')}
         onToggleSearch={() => setIsSearching((prev) => !prev)}
       />
       {isSearching && (
@@ -143,7 +201,7 @@ const Sidebar = ({
       )}
       {!hasContent && (
         <div className='font-poppins pt-2 text-center text-sm text-white'>
-          NO FOLDER OPENED
+          NO CONTENT OPENED
         </div>
       )}
       {isSearching ? (
@@ -172,7 +230,7 @@ const Sidebar = ({
               onDragCancel={onDragCancel}
             >
               <SortableContext
-                items={tree.map((t) => t.id)}
+                items={allSortableIds}
                 strategy={verticalListSortingStrategy}
               >
                 <div className='flex flex-col gap-1'>
@@ -182,10 +240,22 @@ const Sidebar = ({
               <TrashDropZone />
               <DragOverlay>
                 {activeFolder && (
-                  <FolderElement
-                    label={activeFolder.name}
+                  <SortableFolderElement
+                    id={activeFolder.folderid}
+                    name={activeFolder.name}
+                    isExpanded={expandedFolders.has(activeFolder.folderid)}
+                    onToggleExpanded={() =>
+                      toggleFolderExpanded(activeFolder.folderid)
+                    }
+                    onRename={() => {}}
+                  />
+                )}
+                {activeNotebook && (
+                  <SortableNotebookElement
+                    id={activeNotebook.notebookid}
+                    name={activeNotebook.name}
                     onClick={() => {}}
-                    className='opacity-100'
+                    onRename={() => {}}
                   />
                 )}
               </DragOverlay>
