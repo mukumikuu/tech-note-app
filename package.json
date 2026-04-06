@@ -49,8 +49,7 @@
     "react-dom": "^19.2.4",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "tailwindcss": "^4.1.18",
-    "trie-search": "^2.2.1"
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

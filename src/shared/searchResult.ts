@@ -4,10 +4,12 @@ export type SearchResult = {
   matches: Match[]
 }
 
-type Match = {
+export type Match = {
   blockid: string
   type: 'code' | 'markdown'
-  snippet: string
+  snippet: string | undefined
+  from: number
+  to: number
 }
 
 export type SearchResultsEvent =
