@@ -13,7 +13,7 @@ import SortableFolderElement from './sortablefolderelement'
 import Folder from '../../shared/folder'
 import Notebook from '../../shared/notebook'
 import TrashDropZone from './trashbar'
-import { useSearch } from '../hooks/useSearch'
+import { useSearch } from '../hooks/usesearch'
 import type { SidebarItem } from '../types/sidebaritem'
 import { useSidebar } from '../hooks/usesidebar'
 import NotebookClass from '../../shared/notebook'
@@ -211,7 +211,7 @@ const Sidebar = ({
               <div className='font-bold'>{r.name}</div>
               {r.matches.map((m) => (
                 <div key={m.blockid} className='text-xs opacity-80'>
-                  {m.snippet}
+                  <p dangerouslySetInnerHTML={{ __html: m.snippet! }} />
                 </div>
               ))}
             </div>

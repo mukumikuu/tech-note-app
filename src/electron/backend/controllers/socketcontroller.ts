@@ -1,7 +1,6 @@
 import { Socket } from 'socket.io'
 import { KernelManager } from '../kernel/kernelmanager.js'
 import {
-  searchInNotebook,
   searchAcrossNotebook,
   saveNotebook,
   loadNotebook,
@@ -32,14 +31,10 @@ const socketHandlers = (socket: Socket, kernel: KernelManager) => {
     kernel.stop()
     await kernel.start()
   })
-  socket.on('search', async ({ query, notebookId }) => {
+  socket.on('search', async ({ query }) => {
     let results
     try {
-      if (notebookId) {
-        results = searchInNotebook(query, notebookId)
-      } else {
-        results = searchAcrossNotebook(query)
-      }
+      results = await searchAcrossNotebook(query)
       socket.emit('searchResults', {
         status: 'success',
         results,

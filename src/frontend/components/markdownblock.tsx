@@ -10,13 +10,16 @@ import { useCopyToClipboard } from '../hooks/usecopytoclipboard'
 type MarkdownBlockProps = {
   id: string
   content: string
+  searchQuery?: string
   onContentChange: (content: string) => void
   onAdd: (type: 'markdown' | 'code') => void
   onRemove: () => void
+  onRenderedRef?: (id: string, view: HTMLElement) => void
 }
 const MarkdownBlock = ({
   id,
   content,
+  searchQuery,
   onContentChange,
   onAdd,
   onRemove,
@@ -47,6 +50,20 @@ const MarkdownBlock = ({
   const handleRemove = () => {
     onRemove()
     console.log(`${id} is removed`)
+  }
+
+  const highlightContent = (text: string, query: string) => {
+    if (!query) return text
+    const parts = text.split(new RegExp(`(${query})`, 'gi'))
+    return parts.map((part, i) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <mark key={i} className='bg-yellow-300 text-black'>
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    )
   }
 
   return (
@@ -90,16 +107,23 @@ const MarkdownBlock = ({
               />
             </div>
           )}
-          <textarea
-            className='block field-sizing-content h-auto w-full font-mono text-white'
-            style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
-            value={content}
-            onChange={(e) => {
-              onContentChange(e.target.value)
-            }}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-          />
+          {!focused && searchQuery ? (
+            <div
+              className='block field-sizing-content h-auto w-full font-mono whitespace-pre-wrap text-white'
+              onClick={() => setFocused(true)}
+            >
+              {highlightContent(content, searchQuery)}
+            </div>
+          ) : (
+            <textarea
+              className='block field-sizing-content h-auto w-full font-mono text-white'
+              style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+              value={content}
+              onChange={(e) => onContentChange(e.target.value)}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+            />
+          )}
         </div>
       </div>
     </div>

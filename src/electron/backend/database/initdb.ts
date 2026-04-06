@@ -15,27 +15,41 @@ export function initDB() {
     );
 
     -- FTS5 virtual table
-    CREATE VIRTUAL TABLE IF NOT EXISTS notebooks_fts USING fts5(
-      name,
-      content,
-      content='notebooks',
-      content_rowid='rowid'
+    CREATE VIRTUAL TABLE IF NOT EXISTS blocks_fts USING fts5(
+    content,
+    blockid UNINDEXED,
+    type UNINDEXED,
+    notebookid UNINDEXED
     );
 
-    CREATE TRIGGER IF NOT EXISTS notebooks_ai AFTER INSERT ON notebooks BEGIN
-    INSERT INTO notebooks_fts(rowid, name, content)
-    VALUES (new.rowid, new.name, new.content);
+    CREATE TRIGGER IF NOT EXISTS blocks_ai AFTER INSERT ON notebooks BEGIN
+    INSERT INTO blocks_fts (content, blockid, type, notebookid)
+    SELECT 
+      b.value ->> '$.content',
+      b.value ->> '$.blockid',
+      b.value ->> '$.type',
+      new.notebookid
+    FROM json_each(new.content, '$.blocks') AS b
+    WHERE b.value ->> '$.content' IS NOT NULL;
     END;
 
-    CREATE TRIGGER IF NOT EXISTS notebooks_ad AFTER DELETE ON notebooks BEGIN
-    DELETE FROM notebooks_fts 
-    WHERE rowid = old.rowid;
+    CREATE TRIGGER IF NOT EXISTS blocks_ad AFTER DELETE ON notebooks BEGIN
+    DELETE FROM blocks_fts WHERE notebookid = old.notebookid;
     END;
 
-    CREATE TRIGGER IF NOT EXISTS notebooks_au AFTER UPDATE ON notebooks BEGIN
-    DELETE FROM notebooks_fts WHERE rowid = old.rowid;
-    INSERT INTO notebooks_fts(rowid, name, content)
-    VALUES (new.rowid, new.name, new.content);
+    CREATE TRIGGER IF NOT EXISTS blocks_au AFTER UPDATE ON notebooks 
+    WHEN old.content != new.content
+    BEGIN
+    DELETE FROM blocks_fts WHERE notebookid = old.notebookid;
+    INSERT INTO blocks_fts(blocks_fts) VALUES('optimize');
+    INSERT INTO blocks_fts (content, blockid, type, notebookid)
+    SELECT
+      b.value ->> '$.content',
+      b.value ->> '$.blockid',
+      b.value ->> '$.type',
+      new.notebookid
+    FROM json_each(new.content, '$.blocks') AS b
+    WHERE b.value ->> '$.content' IS NOT NULL;
     END;
   `)
 }

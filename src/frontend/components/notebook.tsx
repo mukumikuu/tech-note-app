@@ -10,11 +10,14 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useState, useEffect } from 'react'
-import { useSearch } from '../hooks/useSearch'
+import { useState, useEffect, useRef } from 'react'
 import FileHeader from './fileheader'
 import { useKernels } from '../hooks/usekernel'
 import type NotebookClass from '../../shared/notebook'
+import SearchBar from './searchbar'
+import { useSearch } from '../hooks/usesearch'
+import { EditorView } from 'codemirror'
+import { useHighlight } from '../hooks/usehighlight'
 
 interface NotebookProps {
   notebook: NotebookClass
@@ -29,10 +32,12 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
     })
   const { runBlock, restartKernel, clearOutput, output } = useKernels()
   const [activeId, setActiveId] = useState<string | null>(null)
-  const [label, setLabel] = useState(notebook.name)
-  const [isSearching, setIsSearching] = useState(false)
   const [query, setQuery] = useState('')
-  const { results, search } = useSearch(notebook.notebookid)
+  const [label, setLabel] = useState(notebook.name)
+  const { results, search } = useSearch(notebook.notebookid, notebook.blocks)
+  const editorRefs = useRef<Map<string, EditorView>>(new Map())
+  const markdownRefs = useRef<Map<string, HTMLElement>>(new Map())
+  useHighlight(results, editorRefs.current, markdownRefs.current)
 
   // Sync label changes back to notebook
   useEffect(() => {
@@ -45,26 +50,6 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
       onNotebookUpdate(updated)
     }
   }, [label])
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement
-      const isTyping =
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.isContentEditable
-      if (isTyping) return
-      if (
-        ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') ||
-        e.key === 'ESCAPE'
-      ) {
-        e.preventDefault()
-        setIsSearching((prev) => !prev)
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
 
   const runAll = async () => {
     for (const b of blocks) {
@@ -106,36 +91,7 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
           items={blocks.map((b) => b.blockid)}
           strategy={verticalListSortingStrategy}
         >
-          {isSearching && (
-            <div className='sticky top-0 z-10 p-2 text-white shadow'>
-              <input
-                autoFocus
-                className='w-full border px-2 py-1 text-sm'
-                placeholder='Search in notebook...'
-                value={query}
-                onChange={(e) => {
-                  const q = e.target.value
-                  setQuery(q)
-                  search(q)
-                }}
-              />
-            </div>
-          )}
-          {isSearching && results.length > 0 && (
-            <div className='p-2 text-sm text-white'>
-              {results.map((r) => (
-                <div key={r.notebookid}>
-                  <div className='font-bold'>{r.name}</div>
-
-                  {r.matches.map((m) => (
-                    <div key={m.blockid} className='text-xs opacity-70'>
-                      {m.snippet}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          )}
+          <SearchBar query={query} setQuery={setQuery} search={search} />
           <div className='flex flex-col gap-4'>
             {blocks.map((block, index) =>
               block.type === 'markdown' ? (
@@ -143,11 +99,13 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
                   key={block.blockid}
                   id={block.blockid}
                   content={block.content!}
+                  searchQuery={query}
                   onContentChange={(val) =>
                     updateBlock(block.blockid, { content: val })
                   }
                   onAdd={(type) => addBlockAfter(index, type)}
                   onRemove={() => removeBlock(block.blockid)}
+                  onRenderedRef={(id, el) => markdownRefs.current.set(id, el)}
                 />
               ) : (
                 <CodeBlock
@@ -172,6 +130,9 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
                   onRemove={() => removeBlock(block.blockid)}
                   onExecute={runBlock}
                   output={output[block.blockid]}
+                  onEditorReady={(_id, view) =>
+                    editorRefs.current.set(block.blockid, view)
+                  }
                 />
               )
             )}
