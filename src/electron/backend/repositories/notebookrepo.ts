@@ -1,7 +1,6 @@
 import db from '../database/db.js'
 import Notebook from '../../../shared/notebook.js'
 import type { SearchResult } from '../../../shared/searchResult.js'
-import Block from '../../../shared/block.js'
 
 type NotebookRow = {
   notebookid: string
@@ -10,10 +9,12 @@ type NotebookRow = {
   content: string
 }
 
-type SearchRow = {
+type FtsRow = {
   notebookid: string
   name: string
-  content: string
+  blockid: string
+  type: 'code' | 'markdown'
+  snippet: string
 }
 
 export function saveNotebook(notebook: Notebook) {
@@ -54,66 +55,41 @@ export function loadNotebook(id: string): Notebook {
   return notebook
 }
 
-export function searchInNotebook(
-  query: string,
-  notebookId: string
-): SearchResult[] {
-  const stmt = db.prepare<[string, string], SearchRow>(`
-    SELECT notebooks.notebookid, notebooks.name, notebooks.content
-    FROM notebooks_fts
-    JOIN notebooks ON notebooks_fts.rowid = notebooks.rowid
-    WHERE notebooks_fts MATCH ? AND notebooks.notebookid = ?
-    `)
-  const rows = stmt.all(query, notebookId)
-  return rows.map((row) => {
-    const parsed = JSON.parse(row.content)
-
-    const matches = parsed.blocks
-      .filter((b: Block) =>
-        b.content!.toLowerCase().includes(query.toLowerCase())
-      )
-      .map((b: Block) => ({
-        blockid: b.blockid,
-        type: b.type,
-        snippet: b.content!.slice(0, 100),
-      }))
-
-    return {
-      notebookid: row.notebookid,
-      name: row.name,
-      matches,
-    }
-  })
-}
-
 export function searchAcrossNotebook(query: string): SearchResult[] {
-  const stmt = db.prepare<[string], SearchRow>(`
-    SELECT notebooks.notebookid, notebooks.name, notebooks.content
-    FROM notebooks_fts
-    JOIN notebooks ON notebooks_fts.rowid = notebooks.rowid
-    WHERE notebooks_fts MATCH ?
-    `)
+  const stmt = db.prepare<[string], FtsRow>(`
+    SELECT DISTINCT
+      n.notebookid,
+      n.name,
+      b.blockid,
+      b.type,
+      snippet(blocks_fts, 0, '<mark>', '</mark>', '...', 20) AS snippet
+    FROM blocks_fts b
+    JOIN notebooks n ON b.notebookid = n.notebookid
+    WHERE blocks_fts MATCH ?
+    ORDER BY rank
+  `)
   const rows = stmt.all(query)
+  const grouped = new Map<string, SearchResult>()
 
-  return rows.map((row) => {
-    const parsed = JSON.parse(row.content)
-
-    const matches = parsed.blocks
-      .filter((b: Block) =>
-        b.content?.toLowerCase().includes(query.toLowerCase())
-      )
-      .map((b: Block) => ({
-        blockid: b.blockid,
-        type: b.type,
-        snippet: b.content!.slice(0, 100),
-      }))
-
-    return {
-      notebookid: row.notebookid,
-      name: row.name,
-      matches,
+  for (const row of rows) {
+    if (!grouped.has(row.notebookid)) {
+      grouped.set(row.notebookid, {
+        notebookid: row.notebookid,
+        name: row.name,
+        matches: [],
+      })
     }
-  })
+
+    grouped.get(row.notebookid)!.matches.push({
+      blockid: row.blockid,
+      type: row.type as 'code' | 'markdown',
+      snippet: row.snippet,
+      from: 0,
+      to: 0,
+    })
+  }
+
+  return [...grouped.values()]
 }
 
 export function getAllNotebooks(): Notebook[] {

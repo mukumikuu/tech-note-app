@@ -22,6 +22,8 @@ import {
   darkEditorLegacy,
 } from '../features/syntaxhighlight/editortheme'
 import LanguageButton from './languagebutton'
+import type { EditorDiv } from '../../test/types/editor'
+import { searchHighlightField } from '../hooks/usehighlight'
 
 type CodeBlockProps = {
   id: string
@@ -34,6 +36,7 @@ type CodeBlockProps = {
   onRemove: () => void
   onExecute: (id: string, code: string, language: Language) => void
   output?: KernelResult
+  onEditorReady?: (id: string, view: EditorView) => void
 }
 
 const CodeBlock = ({
@@ -47,10 +50,11 @@ const CodeBlock = ({
   onRemove,
   onExecute,
   output,
+  onEditorReady,
 }: CodeBlockProps) => {
   const [status, setStatus] = useState<CellStatus>('idle')
   const { copy, copied } = useCopyToClipboard()
-  const editorRef = useRef<HTMLDivElement | null>(null)
+  const editorRef = useRef<EditorDiv | null>(null)
   const viewRef = useRef<EditorView | null>(null)
   const {
     attributes,
@@ -87,6 +91,7 @@ const CodeBlock = ({
           }
         }),
         EditorView.editable.of(!isDragging),
+        searchHighlightField,
       ],
     })
     const view = new EditorView({
@@ -95,6 +100,7 @@ const CodeBlock = ({
     })
     viewRef.current = view
     editorRef.current.cmView = view
+    onEditorReady?.(id, view)
     return () => {
       view.destroy()
       viewRef.current = null
