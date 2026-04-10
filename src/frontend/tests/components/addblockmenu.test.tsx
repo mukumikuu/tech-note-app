@@ -4,7 +4,7 @@ import AddBlockMenu from '../../components/addblockmenu'
 describe('AddBlockMenu', () => {
   const setup = () => {
     const onSelect = jest.fn()
-    render(<AddBlockMenu onSelect={onSelect}></AddBlockMenu>)
+    render(<AddBlockMenu onSelect={onSelect} />)
     return { onSelect }
   }
 

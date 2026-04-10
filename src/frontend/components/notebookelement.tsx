@@ -37,16 +37,18 @@ const NotebookElement: React.FC<ElementProps> = ({
 
   return (
     <button
+      data-testid='notebookelement'
       className={`${baseClasses} ${className}`}
       onClick={() => !isEditing && onClick()}
     >
       <NotebookIcon
+        data-testid='icon'
         size={20}
         color='white'
         {...(dragListeners ?? {})}
         className='shrink-0 cursor-grab px-1'
         onClick={(e) => e.stopPropagation()}
-      ></NotebookIcon>
+      />
       {isEditing ? (
         <input
           autoFocus

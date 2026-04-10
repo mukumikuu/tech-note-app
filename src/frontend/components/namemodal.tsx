@@ -34,12 +34,17 @@ const NameModal = ({
   }
 
   return (
-    <div className='fixed inset-0 z-40 flex items-center justify-center'>
+    <div
+      data-testid='namemodal'
+      className='fixed inset-0 z-40 flex items-center justify-center'
+    >
       <div
+        data-testid='background'
         className='absolute inset-0 bg-black/40 backdrop-blur-sm'
         onClick={handleClose}
       ></div>
       <div
+        data-testid='modalbox'
         className='relative w-[360px] rounded-2xl bg-zinc-900 p-6 text-white shadow-2xl'
         onClick={(e) => e.stopPropagation()}
       >

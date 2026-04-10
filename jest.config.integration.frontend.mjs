@@ -10,16 +10,14 @@ export default {
   },
   testMatch: ['**/test/integration/frontend/*.test.tsx'],
   reporters: [
+    'default',
     [
-      'default',
-      [
-        'jest-html-reporters',
-        {
-          publicPath: './test-results',
-          filename: 'frontend-it.html',
-          openReport: true,
-        },
-      ],
+      'jest-html-reporters',
+      {
+        publicPath: './test-results',
+        filename: 'frontend-it.html',
+        openReport: true,
+      },
     ],
   ],
 }

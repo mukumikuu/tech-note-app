@@ -8,7 +8,7 @@ describe('ExecuteCellButton', () => {
       <ExecuteCellButton
         onExecute={onExecute}
         status='idle'
-      ></ExecuteCellButton>
+      />
     )
     return { onExecute }
   }

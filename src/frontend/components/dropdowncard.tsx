@@ -11,7 +11,7 @@ const DropDownCard = <T,>({
   onSelect,
 }: DropDownCardProps<T>) => {
   return (
-    <div className='absolute z-2 text-[10px]'>
+    <div data-testid='dropdowncard' className='absolute z-2 text-[10px]'>
       {data.map((item, i) => (
         <Button key={i} onClick={() => onSelect(item)} rounded='lg'>
           {renderItem(item)}

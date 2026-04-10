@@ -4,7 +4,7 @@ import React from 'react'
 
 describe('DragButton', () => {
   it('C12-Verify button renders children', () => {
-    render(<DragButton></DragButton>)
+    render(<DragButton/>)
     const image = screen.getByRole('img')
     expect(image).toBeInTheDocument()
     expect(image).toHaveAttribute('alt', '||')
