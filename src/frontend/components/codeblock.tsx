@@ -154,6 +154,8 @@ const CodeBlock = ({
   return (
     <div
       data-testid='codeblock'
+      data-status={status}
+      data-output={output}
       ref={setNodeRef}
       style={style}
       className={`flex w-full gap-2 ${

@@ -9,6 +9,7 @@ const FolderDropZone = ({
   const { setNodeRef, isOver } = useDroppable({ id: `folder-drop:${folderId}` })
   return (
     <div
+      data-testid='folderdrop'
       ref={setNodeRef}
       className={`w-full rounded transition-all duration-150 ${
         isDragging ? 'h-1' : 'h-0'

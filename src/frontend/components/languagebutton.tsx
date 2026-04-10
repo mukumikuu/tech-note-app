@@ -23,7 +23,7 @@ const LanguageButton = ({ value, onChange }: LanguageButtonProps) => {
       onMouseLeave={() => setOpen(false)}
       className='pl-3 text-white'
     >
-      <Button variant='icon' onClick={toggleMenu}>
+      <Button data-testid='languagetoggle' variant='icon' onClick={toggleMenu}>
         {value}
       </Button>
       {open && (

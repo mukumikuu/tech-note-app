@@ -13,16 +13,14 @@ export default {
   },
   testMatch: ['**/electron/tests/**/*.test.ts'],
   reporters: [
+    'default',
     [
-      'default',
-      [
-        'jest-html-reporters',
-        {
-          publicPath: './test-results',
-          filename: 'backend-unit.html',
-          openReport: true,
-        },
-      ],
+      'jest-html-reporters',
+      {
+        publicPath: './test-results',
+        filename: 'backend-unit.html',
+        openReport: true,
+      },
     ],
   ],
 }

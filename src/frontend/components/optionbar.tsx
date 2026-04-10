@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Button from './button'
-import { FilterIcon, SearchIcon, Ellipsis } from 'lucide-react'
+import { SearchIcon, Ellipsis } from 'lucide-react'
 
 interface OptionBarProps {
   onAddFolder: (type: 'folder') => void
@@ -14,28 +14,21 @@ const OptionBar = ({
   onToggleSearch,
 }: OptionBarProps) => {
   const [opened, setOpened] = useState(false)
-  const handleFilter = () => {
-    //TODO in sprint 6
-  }
   const handleEllipsis = () => {
     setOpened((prev) => !prev)
   }
   return (
-    <div>
+    <div data-testid='optionbar'>
       <div className='flex flex-row justify-end gap-2'>
         <Button
-          onClick={handleFilter}
-          variant='icon'
-          icon={FilterIcon}
-          iconSize={12}
-        ></Button>
-        <Button
+          data-testid='searchbutton'
           onClick={onToggleSearch}
           variant='icon'
           icon={SearchIcon}
           iconSize={12}
         ></Button>
         <Button
+          data-testid='ellipsis'
           onClick={handleEllipsis}
           variant='icon'
           icon={Ellipsis}
@@ -44,6 +37,7 @@ const OptionBar = ({
         {opened && (
           <div className='absolute top-6'>
             <Button
+              data-testid='folderbutton'
               onClick={() => {
                 onAddFolder('folder')
                 setOpened((prev) => !prev)
@@ -56,6 +50,7 @@ const OptionBar = ({
               Create New Folder
             </Button>
             <Button
+              data-testid='notebookbutton'
               onClick={() => {
                 onAddNotebook('notebook')
                 setOpened((prev) => !prev)

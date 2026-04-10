@@ -42,7 +42,7 @@ const FileHeader = ({
   }
 
   return (
-    <div className='flex flex-col gap-y-1'>
+    <div className='flex flex-col gap-y-1' data-testid='fileheader'>
       <div className='font-poppins text-2xl font-bold text-white'>
         {isEditing ? (
           <input

@@ -21,7 +21,10 @@ const NewFileFolderModal = ({
   if (!isOpen) return null
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center'>
+    <div
+      className='fixed inset-0 z-50 flex items-center justify-center'
+      data-testid='newfilefoldermodal'
+    >
       {/* Overlay */}
       <div
         className='absolute inset-0 bg-black/40 backdrop-blur-sm'
@@ -30,6 +33,7 @@ const NewFileFolderModal = ({
 
       {/* Modal box */}
       <div
+        data-testid='modalbox'
         className='relative w-[360px] rounded-2xl bg-zinc-900 p-6 text-white shadow-2xl'
         onClick={(e) => e.stopPropagation()}
       >
