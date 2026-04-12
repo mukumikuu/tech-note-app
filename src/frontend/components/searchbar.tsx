@@ -17,7 +17,7 @@ const SearchBar = ({ query, setQuery, search }: SearchBarProps) => {
       if (isTyping) return
       if (
         ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') ||
-        e.key === 'ESCAPE'
+        e.key === 'Escape'
       ) {
         e.preventDefault()
         setIsSearching((prev) => !prev)
@@ -27,7 +27,7 @@ const SearchBar = ({ query, setQuery, search }: SearchBarProps) => {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
   return (
-    <>
+    <div data-testid='searchbar'>
       {isSearching && (
         <div className='sticky top-0 z-10 p-2 text-white shadow'>
           <input
@@ -43,7 +43,7 @@ const SearchBar = ({ query, setQuery, search }: SearchBarProps) => {
           />
         </div>
       )}
-    </>
+    </div>
   )
 }
 

@@ -34,17 +34,13 @@ const SortableFolderElement = ({
   return (
     <div ref={setNodeRef} style={style} {...attributes} className='gap-y-2'>
       <div className='flex items-center gap-1'>
-        <button
-          onClick={onToggleExpanded}
-          className='px-1 py-1 text-white transition-opacity hover:opacity-70'
-        >
-          {isExpanded ? '▼' : '▶'}
-        </button>
         <div className='flex-1'>
           <FolderElement
             label={name}
             onLabelChange={onRename}
             onClick={() => console.log('open', id)}
+            isExpanded={isExpanded}
+            onToggleExpanded={onToggleExpanded}
             className={`${isDragging ? 'opacity-0' : 'opacity-100'}`}
             dragListeners={listeners}
             isDragging={isDragging}

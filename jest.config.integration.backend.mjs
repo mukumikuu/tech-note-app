@@ -13,16 +13,14 @@ export default {
   },
   testMatch: ['**/tests/integration/backend/*.test.ts'],
   reporters: [
+    'default',
     [
-      'default',
-      [
-        'jest-html-reporters',
-        {
-          publicPath: './test-results',
-          filename: 'backend-it.html',
-          openReport: true,
-        },
-      ],
+      'jest-html-reporters',
+      {
+        publicPath: './test-results',
+        filename: 'backend-it.html',
+        openReport: true,
+      },
     ],
   ],
 }
