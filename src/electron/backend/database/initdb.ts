@@ -4,7 +4,8 @@ export function initDB() {
   db.exec(`
     CREATE TABLE IF NOT EXISTS folders (
       folderid TEXT PRIMARY KEY,
-      name TEXT NOT NULL
+      name TEXT NOT NULL,
+      parentFolderId TEXT
     );
 
     CREATE TABLE IF NOT EXISTS notebooks (

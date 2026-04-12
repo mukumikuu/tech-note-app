@@ -9,6 +9,13 @@ import {
   getNotebooksByFolder,
 } from '../repositories/notebookrepo.js'
 import Notebook from '../../../shared/notebook.js'
+import {
+  saveFolder,
+  loadFolder,
+  deleteFolder,
+  getAllFolders,
+} from '../repositories/folderrepo.js'
+import Folder from '../../../shared/folder.js'
 
 const socketHandlers = (socket: Socket, kernel: KernelManager) => {
   socket.on('runCode', async ({ id, code, language }) => {
@@ -129,6 +136,66 @@ const socketHandlers = (socket: Socket, kernel: KernelManager) => {
       })
     } catch (e) {
       socket.emit('notebook:folderLoaded', {
+        status: 'error',
+        error: String(e),
+      })
+    }
+  })
+  socket.on('folder:create', async ({ name, parentFolderId }) => {
+    try {
+      const folder = new Folder(name, parentFolderId ?? undefined)
+      saveFolder(folder)
+      socket.emit('folder:created', {
+        status: 'success',
+        folder,
+      })
+    } catch (e) {
+      socket.emit('folder:created', {
+        status: 'error',
+        error: String(e),
+      })
+    }
+  })
+
+  socket.on('folder:get', async ({ folderId }) => {
+    try {
+      const folder = loadFolder(folderId)
+      socket.emit('folder:loaded', {
+        status: 'success',
+        folder,
+      })
+    } catch (e) {
+      socket.emit('folder:loaded', {
+        status: 'error',
+        error: String(e),
+      })
+    }
+  })
+
+  socket.on('folder:delete', async ({ folderId }) => {
+    try {
+      deleteFolder(folderId)
+      socket.emit('folder:deleted', {
+        status: 'success',
+        folderId,
+      })
+    } catch (e) {
+      socket.emit('folder:deleted', {
+        status: 'error',
+        error: String(e),
+      })
+    }
+  })
+
+  socket.on('folder:listAll', async () => {
+    try {
+      const folders = getAllFolders()
+      socket.emit('folder:allLoaded', {
+        status: 'success',
+        folders,
+      })
+    } catch (e) {
+      socket.emit('folder:allLoaded', {
         status: 'error',
         error: String(e),
       })
