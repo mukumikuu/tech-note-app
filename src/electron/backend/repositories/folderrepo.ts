@@ -1,4 +1,4 @@
-import db from '../database/db.js'
+import {getDB} from '../database/db.js'
 import Folder from '../../../shared/folder.js'
 
 type FolderRow = {
@@ -8,7 +8,7 @@ type FolderRow = {
 }
 
 export function saveFolder(folder: Folder): void {
-  const stmt = db.prepare(`
+  const stmt = getDB().prepare(`
     INSERT OR REPLACE INTO folders
     (folderid, name, parentFolderId)
     VALUES (?, ?, ?)
@@ -18,7 +18,7 @@ export function saveFolder(folder: Folder): void {
 }
 
 export function loadFolder(id: string): Folder {
-  const stmt = db.prepare(`
+  const stmt = getDB().prepare(`
     SELECT folderid, name, parentFolderId
     FROM folders
     WHERE folderid = ?
@@ -41,7 +41,7 @@ export function loadFolder(id: string): Folder {
 }
 
 export function getAllFolders(): Folder[] {
-  const stmt = db.prepare(`
+  const stmt = getDB().prepare(`
     SELECT folderid, name, parentFolderId
     FROM folders
   `)
@@ -61,19 +61,19 @@ export function getAllFolders(): Folder[] {
  * DELETE (recursive)
  */
 export function deleteFolder(folderId: string): void {
-  const getChildren = db.prepare(`
+  const getChildren = getDB().prepare(`
     SELECT folderid FROM folders WHERE parentFolderId = ?
   `)
 
-  const deleteNotebooks = db.prepare(`
+  const deleteNotebooks = getDB().prepare(`
     DELETE FROM notebooks WHERE folderid = ?
   `)
 
-  const deleteFolderStmt = db.prepare(`
+  const deleteFolderStmt = getDB().prepare(`
     DELETE FROM folders WHERE folderid = ?
   `)
 
-  const transaction = db.transaction((id: string) => {
+  const transaction = getDB().transaction((id: string) => {
     // delete children first (recursive)
     const children = getChildren.all(id) as { folderid: string }[]
     for (const child of children) {
@@ -94,7 +94,7 @@ export function deleteFolder(folderId: string): void {
  * GET root folders
  */
 export function getRootFolders(): Folder[] {
-  const stmt = db.prepare(`
+  const stmt = getDB().prepare(`
     SELECT folderid, name, parentFolderId
     FROM folders
     WHERE parentFolderId IS NULL
@@ -113,7 +113,7 @@ export function getRootFolders(): Folder[] {
  * GET children folders
  */
 export function getChildFolders(parentId: string): Folder[] {
-  const stmt = db.prepare(`
+  const stmt = getDB().prepare(`
     SELECT folderid, name, parentFolderId
     FROM folders
     WHERE parentFolderId = ?
@@ -129,7 +129,7 @@ export function getChildFolders(parentId: string): Folder[] {
 }
 
 export function renameFolder(folderId: string, newName: string): void {
-  const stmt = db.prepare(`
+  const stmt = getDB().prepare(`
     UPDATE folders
     SET name = ?
     WHERE folderid = ?

@@ -1,7 +1,7 @@
-import db from './db.js'
+import { getDB } from './db.js'
 
 export function testDB() {
-  const tables = db
+  const tables = getDB()
     .prepare(
       `
     SELECT name FROM sqlite_master 

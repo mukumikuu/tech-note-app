@@ -1,3 +1,4 @@
+import type Folder from '../../shared/folder'
 import Notebook from '../../shared/notebook'
 export type SidebarItem =
   | {
@@ -5,6 +6,7 @@ export type SidebarItem =
       id: string
       name: string
       parentFolderId?: string
+      data: Folder
       children: SidebarItem[]
     }
   | {

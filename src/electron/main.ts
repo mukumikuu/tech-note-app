@@ -21,11 +21,10 @@ app.whenReady().then(async () => {
   log('isPackaged:', `${app.isPackaged}`)
   log('resourcesPath:', process.resourcesPath)
   log('appPath:', app.getAppPath())
-  dropDB() // uncommnet to reset DB during the development
+  // dropDB() // uncommnet to reset DB during the development
   initDB() //
   // testDB()
   // testNotebookRepo()
-  console.log('✅ Database initialized')
 
   mainWindow = new BrowserWindow({
     webPreferences: {

@@ -7,6 +7,7 @@ import { useFolders } from '../hooks/usefolder'
 import { useNotebook } from '../hooks/usenotebook'
 import type NotebookClass from '../../shared/notebook'
 import { useEffect } from 'react'
+import type Folder from '../../shared/folder'
 
 function App() {
   const [startModalOpen, setStartModalOpen] = useState(false)
@@ -18,9 +19,9 @@ function App() {
   const {
     folders,
     fLoaded,
-    setFolders,
     addFolder,
     removeFolder,
+    updateFolder,
     reorderFolders,
     reparentFolder,
     listAllFolder,
@@ -61,6 +62,10 @@ function App() {
     updateNotebook(updatedNotebook)
   }
 
+  const handleFolderUpdate = (updatedFolder: Folder) => {
+    updateFolder(updatedFolder)
+  }
+
   const openFileNameModal = () => {
     setStartModalOpen(false)
     setFolderNameOpen(false)
@@ -88,10 +93,10 @@ function App() {
       <Sidebar
         folders={folders}
         notebooks={notebooks}
-        setFolders={setFolders}
         addNotebook={createNotebook}
         addFolder={addFolder}
         removeFolder={removeFolder}
+        onFolderUpdate={handleFolderUpdate}
         reorderFolders={reorderFolders}
         reparentFolder={reparentFolder}
         onNotebookSelect={handleNotebookSelect}

@@ -1,7 +1,7 @@
-import db from './db.js'
+import { getDB } from './db.js'
 
 export function initDB() {
-  db.exec(`
+  getDB().exec(`
     CREATE TABLE IF NOT EXISTS folders (
       folderid TEXT PRIMARY KEY,
       name TEXT NOT NULL,
