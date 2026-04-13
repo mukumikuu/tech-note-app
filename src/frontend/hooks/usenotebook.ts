@@ -15,6 +15,7 @@ interface UseNotebookReturn {
   loading: boolean
   error: string | null
   status: CellStatus
+  nbLoaded: boolean
   createNotebook: (name: string, folderId?: string) => void
   getNotebook: (notebookId: string) => void
   updateNotebook: (notebook: Notebook) => void
@@ -31,6 +32,7 @@ interface UseNotebookReturn {
 export function useNotebook(notebookId?: string): UseNotebookReturn {
   const [notebook, setNotebook] = useState<Notebook | null>(null)
   const [notebooks, setNotebooks] = useState<Notebook[]>([])
+  const [nbLoaded, setNbLoaded] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [status, setStatus] = useState<CellStatus>('idle')
@@ -108,6 +110,7 @@ export function useNotebook(notebookId?: string): UseNotebookReturn {
       setStatus('success')
       setLoading(false)
       setTimeout(() => setStatus('idle'), 300)
+      setNbLoaded(true)
     } else {
       setError(data.error)
       setStatus('error')
@@ -235,6 +238,7 @@ export function useNotebook(notebookId?: string): UseNotebookReturn {
     loading,
     error,
     status,
+    nbLoaded,
     createNotebook,
     getNotebook,
     updateNotebook,

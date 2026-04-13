@@ -24,7 +24,7 @@ interface SidebarProps {
   folders: Folder[]
   notebooks: Notebook[]
   setFolders: Dispatch<SetStateAction<Folder[]>>
-  addFolder: (index: number, name: string) => void
+  addFolder: (name: string) => void
   removeFolder: (id: string) => void
   reorderFolders: (activeId: string, overId: string) => void
   reparentFolder: (folderId: string, newParentId: string | null) => void
@@ -183,7 +183,7 @@ const Sidebar = ({
   return (
     <div className='bg-blue flex h-screen w-1/4 flex-col overflow-hidden px-2 py-2'>
       <OptionBar
-        onAddFolder={() => addFolder(0, 'untitled')}
+        onAddFolder={() => addFolder('untitled')}
         onAddNotebook={() => addNotebook('untitled')}
         onToggleSearch={() => setIsSearching((prev) => !prev)}
       />
