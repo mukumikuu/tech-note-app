@@ -6,7 +6,7 @@ export type { folderType }
 class Folder {
   public folderid: string
   public name: string
-  public folders?: Folder[] = []
+  public folders: Folder[] = []
   public notebooks: Notebook[] = []
   public parentFolderId?: string
 
