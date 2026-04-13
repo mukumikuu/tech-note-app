@@ -41,7 +41,7 @@ app.whenReady().then(async () => {
 
   if (isDev()) {
     mainWindow.loadURL('http://localhost:5123')
-    import('react-devtools-electron')
+    // import('react-devtools-electron')
   } else {
     mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'))
   }

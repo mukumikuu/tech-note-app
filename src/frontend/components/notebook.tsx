@@ -15,7 +15,7 @@ import FileHeader from './fileheader'
 import { useKernels } from '../hooks/usekernel'
 import type NotebookClass from '../../shared/notebook'
 import SearchBar from './searchbar'
-import { useSearch } from '../hooks/useSearch'
+import { useSearch } from '../hooks/usesearch'
 import { EditorView } from 'codemirror'
 import { useHighlight } from '../hooks/usehighlight'
 
@@ -49,7 +49,7 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
       const updated = { ...notebook, name: label }
       onNotebookUpdate(updated)
     }
-  }, [label])
+  }, [label, notebook, onNotebookUpdate])
 
   const runAll = async () => {
     for (const b of blocks) {
