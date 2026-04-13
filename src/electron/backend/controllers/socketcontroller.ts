@@ -171,6 +171,15 @@ const socketHandlers = (socket: Socket, kernel: KernelManager) => {
       })
     }
   })
+  
+  socket.on('folder:update', async ({ folder }) => {
+    try {
+      saveFolder(folder)
+      socket.emit('folder:updated', { status: 'success', folder })
+    } catch (e) {
+      socket.emit('folder:updated', { status: 'error', error: String(e) })
+    }
+  })
 
   socket.on('folder:delete', async ({ folderId }) => {
     try {

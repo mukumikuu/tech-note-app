@@ -1,25 +1,109 @@
 import Folder from '../../shared/folder'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
+import type {
+  DeleteResponse,
+  FolderResponse,
+  FoldersResponse,
+} from '../types/response'
+import { socket } from '../utils/socket'
+import type { CellStatus } from '../../shared/cellstatus'
 export const useFolders = () => {
   const [folders, setFolders] = useState<Folder[]>([])
+  const [fLoaded, setFLoaded] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [status, setStatus] = useState<CellStatus>('idle')
+  const createHandler = (data: FolderResponse) => {
+    if (data.status === 'success') {
+      setFolders((prev) => [...prev, data.folder])
+      setError(null)
+      setStatus('success')
+      setTimeout(() => setStatus('idle'), 300)
+    } else {
+      setError(data.error)
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 300)
+    }
+  }
 
-  const addFolder = (index: number, name: string) => {
-    setFolders((prev) => {
-      const copy = [...prev]
-      copy.splice(index + 1, 0, {
-        folderid: crypto.randomUUID(),
-        name: name,
-        folders: [],
-        notebooks: [],
-        parentFolderId: undefined,
-      })
-      return copy
+  const allLoadHandler = (data: FoldersResponse) => {
+    if (data.status === 'success') {
+      console.log(data.folders)
+      setFolders(data.folders)
+      setError(null)
+      setStatus('success')
+      setTimeout(() => setStatus('idle'), 300)
+      setFLoaded(true)
+    } else {
+      setError(data.error)
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 300)
+    }
+  }
+
+  const updateHandler = (data: FolderResponse) => {
+    if (data.status === 'success') {
+      setFolders((prev) =>
+        prev.map((f) => (f.folderid === data.folder.folderid ? data.folder : f))
+      )
+      setError(null)
+      setStatus('success')
+      setTimeout(() => setStatus('idle'), 300)
+    } else {
+      setError(data.error)
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 300)
+    }
+  }
+
+  const deleteHandler = (data: DeleteResponse) => {
+    if (data.status === 'success') {
+      setError(null)
+      setStatus('success')
+      setTimeout(() => setStatus('idle'), 300)
+    } else {
+      setError(data.error)
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 300)
+    }
+  }
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('connected to folder management system')
     })
+    socket.on('folder:created', createHandler)
+    socket.on('folder:updated', updateHandler)
+    socket.on('folder:deleted', deleteHandler)
+    socket.on('folder:allLoaded', allLoadHandler)
+    return () => {
+      socket.off('connect')
+      socket.off('folder:created', createHandler)
+      socket.off('foder:updated', updateHandler)
+      socket.off('folder:deleted', deleteHandler)
+      socket.off('folder:allLoaded', allLoadHandler)
+    }
+  }, [])
+
+  const addFolder = (name: string) => {
+    setStatus('running')
+    socket.emit('folder:create', { name })
   }
 
   const removeFolder = (id: string) => {
+    setStatus('running')
+    socket.emit('folder:delete', { folderId: id })
     setFolders((prev) => prev.filter((f) => f.folderid !== id))
+  }
+
+  const updateFolder = (folderData: Folder) => {
+    setStatus('running')
+    socket.emit('folder:update', { folder: folderData })
+  }
+
+  const listAllFolder = () => {
+    setStatus('running')
+    socket.emit('folder:listAll')
   }
 
   const reorderFolders = (activeId: string, overId: string) => {
@@ -58,11 +142,16 @@ export const useFolders = () => {
   }
 
   return {
+    status,
+    error,
     folders,
+    fLoaded,
     setFolders,
     addFolder,
+    updateFolder,
     removeFolder,
     reorderFolders,
     reparentFolder,
+    listAllFolder,
   }
 }

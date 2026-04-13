@@ -1,3 +1,4 @@
+import type Folder from '../../shared/folder'
 import type { KernelResult } from '../../shared/kernelResult'
 import Notebook from '../../shared/notebook'
 export type NotebookResponse =
@@ -13,3 +14,9 @@ export type CodeResponse = {
   id: string
   result: KernelResult
 }
+export type FolderResponse =
+  | { status: 'success'; folder: Folder }
+  | { status: 'error'; error: string }
+export type FoldersResponse =
+  | { status: 'success'; folders: Folder[] }
+  | { status: 'error'; error: string }

@@ -6,9 +6,10 @@ import { useState } from 'react'
 import { useFolders } from '../hooks/usefolder'
 import { useNotebook } from '../hooks/usenotebook'
 import type NotebookClass from '../../shared/notebook'
+import { useEffect } from 'react'
 
 function App() {
-  const [startModalOpen, setStartModalOpen] = useState(true)
+  const [startModalOpen, setStartModalOpen] = useState(false)
   const [fileNameOpen, setFileNameOpen] = useState(false)
   const [folderNameOpen, setFolderNameOpen] = useState(false)
   const [selectedNotebookId, setSelectedNotebookId] = useState<string | null>(
@@ -16,21 +17,36 @@ function App() {
   )
   const {
     folders,
+    fLoaded,
     setFolders,
     addFolder,
     removeFolder,
     reorderFolders,
     reparentFolder,
+    listAllFolder,
   } = useFolders()
   const {
     notebook,
     notebooks,
+    nbLoaded,
     getNotebook,
     updateNotebook,
     createNotebook,
     deleteNotebook,
     reorderNotebooks,
+    listAllNotebooks,
   } = useNotebook(selectedNotebookId || undefined)
+
+  useEffect(() => {
+    listAllFolder()
+    listAllNotebooks()
+  }, [])
+
+  useEffect(() => {
+    if (fLoaded && nbLoaded) {
+      setStartModalOpen(folders.length === 0 && notebooks.length === 0)
+    }
+  }, [fLoaded, nbLoaded, folders, notebooks])
 
   const handleNotebookSelect = (notebookId: string) => {
     setSelectedNotebookId(notebookId)
@@ -63,7 +79,7 @@ function App() {
   }
 
   const handleCreateFolder = (name: string) => {
-    addFolder(0, name)
+    addFolder(name)
     setFolderNameOpen(false)
   }
 
@@ -115,13 +131,6 @@ function App() {
             />
           )}
         </>
-        {/* {!open && notebook && (
-          <Notebook
-            key={notebook.notebookid}
-            notebook={notebook}
-            onNotebookUpdate={handleNotebookUpdate}
-          />
-        )} */}
       </div>
     </div>
   )
