@@ -15,7 +15,7 @@ import FileHeader from './fileheader'
 import { useKernels } from '../hooks/usekernel'
 import type NotebookClass from '../../shared/notebook'
 import SearchBar from './searchbar'
-import { useSearch } from '../hooks/usesearch'
+import { useSearch } from '../hooks/useSearch'
 import { EditorView } from 'codemirror'
 import { useHighlight } from '../hooks/usehighlight'
 
