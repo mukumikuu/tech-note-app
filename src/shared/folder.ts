@@ -1,4 +1,4 @@
-import type Notebook from './notebook'
+import type Notebook from './notebook.js'
 
 type folderType = 'folder'
 export type { folderType }
