@@ -1,7 +1,7 @@
-import db from './db.js'
+import {getDB} from './db.js'
 
 export function dropDB() {
-  db.exec(`
+  getDB().exec(`
     DROP TABLE IF EXISTS folders;
     DROP TABLE IF EXISTS notebooks;
     DROP TABLE IF EXISTS blocks_fts;

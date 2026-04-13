@@ -7,7 +7,7 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useState, type Dispatch, type SetStateAction } from 'react'
+import { useState } from 'react'
 import OptionBar from './optionbar'
 import SortableFolderElement from './sortablefolderelement'
 import Folder from '../../shared/folder'
@@ -23,9 +23,9 @@ import FolderDropZone from './folderdropzone'
 interface SidebarProps {
   folders: Folder[]
   notebooks: Notebook[]
-  setFolders: Dispatch<SetStateAction<Folder[]>>
   addFolder: (name: string) => void
   removeFolder: (id: string) => void
+  onFolderUpdate?: (folder: Folder) => void
   reorderFolders: (activeId: string, overId: string) => void
   reparentFolder: (folderId: string, newParentId: string | null) => void
   onNotebookSelect?: (notebookId: string) => void
@@ -42,9 +42,9 @@ interface SidebarProps {
 const Sidebar = ({
   folders,
   notebooks,
-  setFolders,
   addFolder,
   removeFolder,
+  onFolderUpdate,
   reorderFolders,
   reparentFolder,
   onNotebookSelect,
@@ -147,10 +147,8 @@ const Sidebar = ({
             name={item.name}
             isExpanded={expandedFolders.has(item.id)}
             onToggleExpanded={() => toggleFolderExpanded(item.id)}
-            onRename={(name) =>
-              setFolders((prev) =>
-                prev.map((f) => (f.folderid === item.id ? { ...f, name } : f))
-              )
+            onRename={(label) =>
+              onFolderUpdate?.({ ...item.data, name: label })
             }
           />
           <FolderDropZone folderId={item.id} isDragging={activeId !== null} />

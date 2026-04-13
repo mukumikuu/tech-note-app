@@ -1,4 +1,4 @@
-import db from '../database/db.js'
+import { getDB } from '../database/db.js'
 import Notebook from '../../../shared/notebook.js'
 import type { SearchResult } from '../../../shared/searchResult.js'
 
@@ -18,7 +18,7 @@ type FtsRow = {
 }
 
 export function saveNotebook(notebook: Notebook) {
-  const stmt = db.prepare(`
+  const stmt = getDB().prepare(`
         INSERT OR REPLACE INTO notebooks
     (notebookid, name, folderid, content)
     VALUES (?, ?, ?, ?)
@@ -34,7 +34,7 @@ export function saveNotebook(notebook: Notebook) {
 }
 
 export function loadNotebook(id: string): Notebook {
-  const stmt = db.prepare(`
+  const stmt = getDB().prepare(`
     SELECT notebookid, name, folderid, content
     FROM notebooks
     WHERE notebookid = ?
@@ -56,7 +56,7 @@ export function loadNotebook(id: string): Notebook {
 }
 
 export function searchAcrossNotebook(query: string): SearchResult[] {
-  const stmt = db.prepare<[string], FtsRow>(`
+  const stmt = getDB().prepare<[string], FtsRow>(`
     SELECT DISTINCT
       n.notebookid,
       n.name,
@@ -93,7 +93,7 @@ export function searchAcrossNotebook(query: string): SearchResult[] {
 }
 
 export function getAllNotebooks(): Notebook[] {
-  const stmt = db.prepare(`
+  const stmt = getDB().prepare(`
     SELECT notebookid, name, folderid, content
     FROM notebooks
     `)
@@ -109,7 +109,7 @@ export function getAllNotebooks(): Notebook[] {
 }
 
 export function deleteNotebook(notebookId: string): void {
-  const stmt = db.prepare(`
+  const stmt = getDB().prepare(`
     DELETE FROM notebooks
     WHERE notebookid = ?
     `)
@@ -117,7 +117,7 @@ export function deleteNotebook(notebookId: string): void {
 }
 
 export function getNotebooksByFolder(folderId: string): Notebook[] {
-  const stmt = db.prepare(`
+  const stmt = getDB().prepare(`
     SELECT notebookid, name, folderid, content
     FROM notebooks
     WHERE folderid = ?

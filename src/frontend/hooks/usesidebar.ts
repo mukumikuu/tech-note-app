@@ -16,6 +16,7 @@ export const useSidebar = (folders: Folder[], notebooks: Notebook[]) => {
         id: f.folderid,
         name: f.name,
         children: [],
+        data: f,
       })
     })
 
@@ -73,7 +74,7 @@ export const useSidebar = (folders: Folder[], notebooks: Notebook[]) => {
     if (f) return f.parentFolderId ?? undefined
     return undefined
   }
-  
+
   return {
     activeFolder,
     activeNotebook,
