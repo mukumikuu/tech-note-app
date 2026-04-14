@@ -9,6 +9,7 @@ const linterMap: LinterMap = {
   JavaScript: jsLinter,
   Python: jsLinter,
   Shell: jsLinter,
+  SQL: jsLinter,
 }
 
 export default linterMap

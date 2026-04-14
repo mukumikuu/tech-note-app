@@ -28,7 +28,7 @@ const LanguageButton = ({ value, onChange }: LanguageButtonProps) => {
       data-testid='languagebutton'
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
-      className='pl-3 text-white'
+      className='relative inline-flex pl-3 text-white'
     >
       <Button data-testid='languagetoggle' variant='icon' onClick={toggleMenu}>
         {value}
