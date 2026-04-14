@@ -2,6 +2,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import { python } from '@codemirror/lang-python'
 import { cpp } from '@codemirror/lang-cpp'
 import { java } from '@codemirror/lang-java'
+import { sql } from '@codemirror/lang-sql'
 import { LanguageSupport, StreamLanguage } from '@codemirror/language'
 import { shell } from '@codemirror/legacy-modes/mode/shell'
 import type { Language } from '../../../shared/language'
@@ -13,6 +14,7 @@ const languageMap: LanguageMap = {
   JavaScript: javascript(),
   Python: python(),
   Shell: StreamLanguage.define(shell),
+  SQL: sql(),
 }
 
 export default languageMap
