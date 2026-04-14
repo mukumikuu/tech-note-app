@@ -106,7 +106,7 @@ function App() {
         onNotebookUpdate={handleNotebookUpdate}
         reorderNotebooks={reorderNotebooks}
       />
-      <div className='flex min-w-0 flex-1 flex-col px-4'>
+      <div className='flex min-w-0 flex-1 flex-col px-4 pt-6'>
         <>
           <NewFileFolderModal
             isOpen={startModalOpen}
