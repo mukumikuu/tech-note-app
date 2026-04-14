@@ -49,7 +49,7 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
       const updated = { ...notebook, name: label }
       onNotebookUpdate(updated)
     }
-  }, [label, notebook, onNotebookUpdate])
+  }, [label])
 
   const runAll = async () => {
     for (const b of blocks) {

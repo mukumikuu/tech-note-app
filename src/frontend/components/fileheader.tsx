@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Button from './button'
 import { Play, RotateCcwIcon, Trash2 } from 'lucide-react'
 import Block from '../../shared/block'
+import { useEffect } from 'react'
 interface FileHeaderProps {
   blocks: Block[]
   label: string
@@ -20,6 +21,12 @@ const FileHeader = ({
 }: FileHeaderProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [text, setText] = useState(label)
+
+  useEffect(() => {
+    if (!isEditing) {
+      setText(label)
+    }
+  }, [label])
 
   const handleBlur = () => {
     setIsEditing(false)
