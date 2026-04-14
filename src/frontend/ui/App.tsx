@@ -45,9 +45,11 @@ function App() {
 
   useEffect(() => {
     if (fLoaded && nbLoaded) {
-      setStartModalOpen(folders.length === 0 && notebooks.length === 0)
+      const hasNoContent = folders.length === 0 && notebooks.length === 0
+      const isNamingFlowOpen = fileNameOpen || folderNameOpen
+      setStartModalOpen(hasNoContent && !isNamingFlowOpen)
     }
-  }, [fLoaded, nbLoaded, folders, notebooks])
+  }, [fLoaded, nbLoaded, folders, notebooks, fileNameOpen, folderNameOpen])
 
   const handleNotebookSelect = (notebookId: string) => {
     setSelectedNotebookId(notebookId)
