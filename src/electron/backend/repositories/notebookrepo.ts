@@ -62,16 +62,22 @@ export function searchAcrossNotebook(query: string): SearchResult[] {
       n.name,
       b.blockid,
       b.type,
-      snippet(blocks_fts, 0, '<mark>', '</mark>', '...', 20) AS snippet
+      snippet(blocks_fts, 0, '<mark>', '</mark>', '...', 10) AS snippet
     FROM blocks_fts b
     JOIN notebooks n ON b.notebookid = n.notebookid
     WHERE blocks_fts MATCH ?
     ORDER BY rank
   `)
   const rows = stmt.all(query)
-  const grouped = new Map<string, SearchResult>()
 
+  const grouped = new Map<string, SearchResult>()
+  const seen = new Set<string>()
   for (const row of rows) {
+    const key = `${row.blockid}`
+
+    if (seen.has(key)) continue
+    seen.add(key)
+
     if (!grouped.has(row.notebookid)) {
       grouped.set(row.notebookid, {
         notebookid: row.notebookid,

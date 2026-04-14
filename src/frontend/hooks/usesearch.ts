@@ -7,6 +7,7 @@ import type {
   SearchResultsEvent,
 } from '../../shared/searchResult'
 import Block from '../../shared/block'
+import { escapeRegex } from '../utils/regexp'
 
 export function useSearch(notebookId?: string, blocks?: Block[]) {
   const [results, setResults] = useState<SearchResult[]>([])
@@ -37,14 +38,18 @@ export function useSearch(notebookId?: string, blocks?: Block[]) {
       socket.off('searchResults', searchHandler)
     }
   }, [])
+
   const searchInNotebook = (query: string) => {
     if (!blocks) return
-    const regex = new RegExp(query, 'gi')
+    const regex = new RegExp(escapeRegex(query), 'gi')
     const matches: Match[] = []
     for (const block of blocks) {
       const text = block.content
       let m
       while ((m = regex.exec(text!)) !== null) {
+        if (m.index === regex.lastIndex) {
+          regex.lastIndex++
+        }
         matches.push({
           blockid: block.blockid,
           type: block.type,
