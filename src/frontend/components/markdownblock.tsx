@@ -6,6 +6,7 @@ import DragButton from './dragbutton'
 import Button from './button'
 import { Copy, Trash } from 'lucide-react'
 import { useCopyToClipboard } from '../hooks/usecopytoclipboard'
+import { escapeRegex } from '../utils/regexp'
 
 type MarkdownBlockProps = {
   id: string
@@ -54,7 +55,9 @@ const MarkdownBlock = ({
 
   const highlightContent = (text: string, query: string) => {
     if (!query) return text
-    const parts = text.split(new RegExp(`(${query})`, 'gi'))
+    const safeQuery = escapeRegex(query)
+    const regex = new RegExp(`(${safeQuery})`, 'gi')
+    const parts = text.split(regex)
     return parts.map((part, i) =>
       part.toLowerCase() === query.toLowerCase() ? (
         <mark key={i} className='bg-yellow-300 text-black'>

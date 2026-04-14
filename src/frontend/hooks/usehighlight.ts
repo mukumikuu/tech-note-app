@@ -105,21 +105,35 @@ export function useHighlight(
     }
     if (results.length === 0) return
     for (const result of results) {
-      for (const match of result.matches) {
-        if (match.type === 'code') {
-          const view = editors.get(match.blockid)
-          if (!view) continue
-          const blockMatches = result.matches.filter(
-            (m) => m.blockid === match.blockid
-          )
-          view.dispatch({
-            effects: setSearchMatches.of(buildHighlights(blockMatches)),
-          })
-        } else if (match.type === 'markdown') {
-          const el = renderedRefs.get(match.blockid)
-          if (!el) continue
-          highlightInRenderedMarkdown(el, match.snippet!)
-        }
+      // for (const match of result.matches) {
+      //   if (match.type === 'code') {
+      //     const view = editors.get(match.blockid)
+      //     if (!view) continue
+      //     const blockMatches = result.matches.filter(
+      //       (m) => m.blockid === match.blockid
+      //     )
+      //     view.dispatch({
+      //       effects: setSearchMatches.of(buildHighlights(blockMatches)),
+      //     })
+      //   } else if (match.type === 'markdown') {
+      //     const el = renderedRefs.get(match.blockid)
+      //     if (!el) continue
+      //     highlightInRenderedMarkdown(el, match.snippet!)
+      //   }
+      // }
+      const grouped = new Map<string, Match[]>()
+
+      for (const m of result.matches) {
+        if (m.type !== 'code') continue
+        if (!grouped.has(m.blockid)) grouped.set(m.blockid, [])
+        grouped.get(m.blockid)!.push(m)
+      }
+      for (const [blockid, matches] of grouped) {
+        const view = editors.get(blockid)
+        if (!view) continue
+        view.dispatch({
+          effects: setSearchMatches.of(buildHighlights(matches)),
+        })
       }
     }
   }, [results])
