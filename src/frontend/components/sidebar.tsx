@@ -7,7 +7,7 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import OptionBar from './optionbar'
 import SortableFolderElement from './sortablefolderelement'
 import Folder from '../../shared/folder'
@@ -19,6 +19,13 @@ import { useSidebar } from '../hooks/usesidebar'
 import NotebookClass from '../../shared/notebook'
 import SortableNotebookElement from './sortablenotebookelement'
 import FolderDropZone from './folderdropzone'
+
+const DEFAULT_SIDEBAR_RATIO = 0.25
+
+const getDefaultSidebarWidth = () => {
+  if (typeof window === 'undefined') return 320
+  return Math.round(window.innerWidth * DEFAULT_SIDEBAR_RATIO)
+}
 
 interface SidebarProps {
   folders: Folder[]
@@ -53,8 +60,11 @@ const Sidebar = ({
   reorderNotebooks,
   removeNotebook,
 }: SidebarProps) => {
+  const initialSidebarWidth = useRef(getDefaultSidebarWidth()).current
   const [isSearching, setIsSearching] = useState(false)
+  const [sidebarWidth, setSidebarWidth] = useState(initialSidebarWidth)
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
+  const isResizingRef = useRef(false)
   const { results, search } = useSearch()
   const {
     activeFolder,
@@ -138,6 +148,41 @@ const Sidebar = ({
   function onDragCancel() {
     setActiveId(null)
   }
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (!isResizingRef.current) return
+      const minWidth = initialSidebarWidth
+      const maxWidth = Math.min(640, window.innerWidth - 320)
+      const nextWidth = Math.max(minWidth, Math.min(event.clientX, maxWidth))
+      setSidebarWidth(nextWidth)
+    }
+
+    const handleMouseUp = () => {
+      if (!isResizingRef.current) return
+      isResizingRef.current = false
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+  }, [initialSidebarWidth])
+
+  const startResizing = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    isResizingRef.current = true
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+  }
+
   const renderItem = (item: SidebarItem, depth = 0): React.ReactNode => {
     if (item.type === 'folder') {
       return (
@@ -179,7 +224,10 @@ const Sidebar = ({
   }
 
   return (
-    <div className='bg-blue flex h-screen w-1/4 flex-col overflow-hidden px-2 py-2'>
+    <div
+      className='bg-blue relative flex h-screen shrink-0 flex-col overflow-hidden px-2 py-2'
+      style={{ width: `${sidebarWidth}px` }}
+    >
       <OptionBar
         onAddFolder={() => addFolder('untitled')}
         onAddNotebook={() => addNotebook('untitled')}
@@ -197,70 +245,77 @@ const Sidebar = ({
           }}
         />
       )}
-      {!hasContent && (
-        <div className='font-poppins pt-2 text-center text-sm text-white'>
-          NO CONTENT OPENED
-        </div>
-      )}
-      {isSearching ? (
-        <div className='mt-2 flex flex-col gap-2 text-white'>
-          {results.map((r) => (
-            <div key={r.notebookid}>
-              <div className='font-bold'>{r.name}</div>
-              {r.matches.map((m) => (
-                <div key={m.blockid} className='text-xs opacity-80'>
-                  <p dangerouslySetInnerHTML={{ __html: m.snippet! }} />
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      ) : (
-        hasContent && (
-          <>
-            <div className='font-poppins gap-2 pt-2 pb-2 text-left text-sm text-white'>
-              FOLDERS
-            </div>
-            <DndContext
-              collisionDetection={closestCenter}
-              onDragStart={onDragStart}
-              onDragEnd={onDragEnd}
-              onDragCancel={onDragCancel}
-            >
-              <SortableContext
-                items={allSortableIds}
-                strategy={verticalListSortingStrategy}
+      <div className='mt-2 min-h-0 flex-1 overflow-y-auto pr-1'>
+        {!hasContent && (
+          <div className='font-poppins pt-2 text-center text-sm text-white'>
+            NO CONTENT OPENED
+          </div>
+        )}
+        {isSearching ? (
+          <div className='flex flex-col gap-2 text-white'>
+            {results.map((r) => (
+              <div key={r.notebookid}>
+                <div className='font-bold'>{r.name}</div>
+                {r.matches.map((m) => (
+                  <div key={m.blockid} className='text-xs opacity-80'>
+                    <p dangerouslySetInnerHTML={{ __html: m.snippet! }} />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        ) : (
+          hasContent && (
+            <>
+              <div className='font-poppins gap-2 pt-2 pb-2 text-left text-sm text-white'>
+                FOLDERS
+              </div>
+              <DndContext
+                collisionDetection={closestCenter}
+                onDragStart={onDragStart}
+                onDragEnd={onDragEnd}
+                onDragCancel={onDragCancel}
               >
-                <div className='flex flex-col gap-1'>
-                  {tree.map((item: SidebarItem) => renderItem(item))}
-                </div>
-              </SortableContext>
-              <TrashDropZone />
-              <DragOverlay>
-                {activeFolder && (
-                  <SortableFolderElement
-                    id={activeFolder.folderid}
-                    name={activeFolder.name}
-                    isExpanded={expandedFolders.has(activeFolder.folderid)}
-                    onToggleExpanded={() =>
-                      toggleFolderExpanded(activeFolder.folderid)
-                    }
-                    onRename={() => {}}
-                  />
-                )}
-                {activeNotebook && (
-                  <SortableNotebookElement
-                    id={activeNotebook.notebookid}
-                    name={activeNotebook.name}
-                    onClick={() => {}}
-                    onRename={() => {}}
-                  />
-                )}
-              </DragOverlay>
-            </DndContext>
-          </>
-        )
-      )}
+                <SortableContext
+                  items={allSortableIds}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className='flex flex-col gap-1'>
+                    {tree.map((item: SidebarItem) => renderItem(item))}
+                  </div>
+                </SortableContext>
+                <TrashDropZone />
+                <DragOverlay>
+                  {activeFolder && (
+                    <SortableFolderElement
+                      id={activeFolder.folderid}
+                      name={activeFolder.name}
+                      isExpanded={expandedFolders.has(activeFolder.folderid)}
+                      onToggleExpanded={() =>
+                        toggleFolderExpanded(activeFolder.folderid)
+                      }
+                      onRename={() => {}}
+                    />
+                  )}
+                  {activeNotebook && (
+                    <SortableNotebookElement
+                      id={activeNotebook.notebookid}
+                      name={activeNotebook.name}
+                      onClick={() => {}}
+                      onRename={() => {}}
+                    />
+                  )}
+                </DragOverlay>
+              </DndContext>
+            </>
+          )
+        )}
+      </div>
+      <div
+        data-testid='sidebar-resizer'
+        className='absolute top-0 right-0 h-full w-1 cursor-col-resize bg-transparent hover:bg-white/20'
+        onMouseDown={startResizing}
+      />
     </div>
   )
 }

@@ -41,13 +41,15 @@ function App() {
   useEffect(() => {
     listAllFolder()
     listAllNotebooks()
-  }, [])
+  }, [listAllFolder, listAllNotebooks])
 
   useEffect(() => {
     if (fLoaded && nbLoaded) {
-      setStartModalOpen(folders.length === 0 && notebooks.length === 0)
+      const hasNoContent = folders.length === 0 && notebooks.length === 0
+      const isNamingFlowOpen = fileNameOpen || folderNameOpen
+      setStartModalOpen(hasNoContent && !isNamingFlowOpen)
     }
-  }, [fLoaded, nbLoaded, folders, notebooks])
+  }, [fLoaded, nbLoaded, folders, notebooks, fileNameOpen, folderNameOpen])
 
   const handleNotebookSelect = (notebookId: string) => {
     setSelectedNotebookId(notebookId)
@@ -104,7 +106,7 @@ function App() {
         onNotebookUpdate={handleNotebookUpdate}
         reorderNotebooks={reorderNotebooks}
       />
-      <div className='flex w-full flex-col px-4'>
+      <div className='flex min-w-0 flex-1 flex-col px-4 pt-6'>
         <>
           <NewFileFolderModal
             isOpen={startModalOpen}
