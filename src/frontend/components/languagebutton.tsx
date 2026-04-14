@@ -9,7 +9,14 @@ type LanguageButtonProps = {
 }
 
 const LanguageButton = ({ value, onChange }: LanguageButtonProps) => {
-  const languages: Language[] = ['Cpp', 'Java', 'JavaScript', 'Python', 'Shell']
+  const languages: Language[] = [
+    'Cpp',
+    'Java',
+    'JavaScript',
+    'Python',
+    'Shell',
+    'SQL',
+  ]
   const [open, setOpen] = useState(false)
 
   const toggleMenu = () => {
