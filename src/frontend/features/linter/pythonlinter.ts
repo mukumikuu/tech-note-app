@@ -46,7 +46,6 @@ const pythonLinter = linter((view): Diagnostic[] => {
   let position = 0
 
   for (const line of lines) {
-
     // 6. Trailing whitespace
     if (/\s+$/.test(line)) {
       diagnostics.push({
@@ -100,15 +99,15 @@ const pythonLinter = linter((view): Diagnostic[] => {
     }
   }
 
-  // 10. Missing newline at end of file
-  if (!text.endsWith('\n')) {
-    diagnostics.push({
-      from: text.length - 1,
-      to: text.length,
-      severity: 'warning',
-      message: 'File should end with a newline',
-    })
-  }
+  // // 10. Missing newline at end of file
+  // if (!text.endsWith('\n')) {
+  //   diagnostics.push({
+  //     from: text.length - 1,
+  //     to: text.length,
+  //     severity: 'warning',
+  //     message: 'File should end with a newline',
+  //   })
+  // }
 
   return diagnostics
 })
