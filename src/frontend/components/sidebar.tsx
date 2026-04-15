@@ -200,7 +200,7 @@ const Sidebar = ({
           {expandedFolders.has(item.id) && (
             <div
               style={{ marginLeft: `${(depth + 1) * 2}px` }}
-              className='flex flex-col gap-1'
+              className='flex flex-col gap-1 pt-1'
             >
               {item.children.map((child) => renderItem(child, depth + 1))}
             </div>
