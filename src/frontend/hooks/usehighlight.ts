@@ -105,22 +105,6 @@ export function useHighlight(
     }
     if (results.length === 0) return
     for (const result of results) {
-      // for (const match of result.matches) {
-      //   if (match.type === 'code') {
-      //     const view = editors.get(match.blockid)
-      //     if (!view) continue
-      //     const blockMatches = result.matches.filter(
-      //       (m) => m.blockid === match.blockid
-      //     )
-      //     view.dispatch({
-      //       effects: setSearchMatches.of(buildHighlights(blockMatches)),
-      //     })
-      //   } else if (match.type === 'markdown') {
-      //     const el = renderedRefs.get(match.blockid)
-      //     if (!el) continue
-      //     highlightInRenderedMarkdown(el, match.snippet!)
-      //   }
-      // }
       const grouped = new Map<string, Match[]>()
 
       for (const m of result.matches) {
