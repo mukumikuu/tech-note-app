@@ -22,15 +22,15 @@ const shellLinter = linter((view): Diagnostic[] => {
     }
   }
 
-  // 1. Missing shebang
-  if (!text.startsWith('#!')) {
-    diagnostics.push({
-      from: 0,
-      to: 0,
-      severity: 'warning',
-      message: 'Missing shebang (e.g. #!/bin/bash)',
-    })
-  }
+  // // 1. Missing shebang
+  // if (!text.startsWith('#!')) {
+  //   diagnostics.push({
+  //     from: 0,
+  //     to: 0,
+  //     severity: 'warning',
+  //     message: 'Missing shebang (e.g. #!/bin/bash)',
+  //   })
+  // }
 
   // 2. Dangerous rm command
   addMatches(/\brm\s+-rf\s+\/\b/g, 'Dangerous command: rm -rf /', 'error')
@@ -86,15 +86,15 @@ const shellLinter = linter((view): Diagnostic[] => {
     position += line.length + 1
   }
 
-  // 11. Missing newline at end of file
-  if (!text.endsWith('\n')) {
-    diagnostics.push({
-      from: text.length - 1,
-      to: text.length,
-      severity: 'warning',
-      message: 'File should end with a newline',
-    })
-  }
+  // // 11. Missing newline at end of file
+  // if (!text.endsWith('\n')) {
+  //   diagnostics.push({
+  //     from: text.length - 1,
+  //     to: text.length,
+  //     severity: 'warning',
+  //     message: 'File should end with a newline',
+  //   })
+  // }
 
   return diagnostics
 })
