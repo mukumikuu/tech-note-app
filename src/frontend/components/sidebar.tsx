@@ -235,7 +235,7 @@ const Sidebar = ({
       />
       {isSearching && (
         <input
-          className='mt-2 text-sm text-white'
+          className='mt-2 rounded-sm border border-gray-500 px-2 text-sm text-white'
           placeholder='Search...'
           value={query}
           onChange={(e) => {
