@@ -56,7 +56,9 @@ describe('folderelement', () => {
         isExpanded={true}
       />
     )
-    expect(screen.getByTestId('togglebutton')).toHaveTextContent('▼')
+    expect(screen.getByTestId('togglebutton')).toContainElement(
+      screen.getByTestId('ChevronDown')
+    )
   })
 
   it('C93-Verify folderelement shows collapsed indicator', () => {
@@ -68,7 +70,9 @@ describe('folderelement', () => {
         isExpanded={false}
       />
     )
-    expect(screen.getByTestId('togglebutton')).toHaveTextContent('▶')
+    expect(screen.getByTestId('togglebutton')).toContainElement(
+      screen.getByTestId('ChevronRight')
+    )
   })
 
   it('C94-Verify folderelement calls onClick when not editing', () => {
