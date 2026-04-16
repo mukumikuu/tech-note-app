@@ -41,7 +41,11 @@ const FolderElement: React.FC<ElementProps> = ({
         onClick={onToggleExpanded}
         className='px-1 py-1 text-white transition-opacity hover:opacity-70'
       >
-        {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+        {isExpanded ? (
+          <ChevronDown data-testid='ChevronDown' size={16} />
+        ) : (
+          <ChevronRight data-testid='ChevronRight' size={16} />
+        )}
       </button>
       <button
         onClick={() => !isEditing && onClick()}

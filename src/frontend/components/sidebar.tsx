@@ -122,6 +122,10 @@ const Sidebar = ({
         const currentParent = activeFolder?.parentFolderId ?? null
         if (targetFolderId !== currentParent) {
           reparentFolder(activeIdStr, targetFolderId)
+          onFolderUpdate?.({
+            ...activeFolder!,
+            parentFolderId: targetFolderId,
+          })
           if (targetFolderId) {
             setExpandedFolders((prev) => new Set(prev).add(targetFolderId))
           }

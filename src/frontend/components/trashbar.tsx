@@ -10,7 +10,7 @@ const TrashDropZone = () => {
     <div
       ref={setNodeRef}
       data-testid='trashbar'
-      className={`bg-dark-blue mt-auto flex h-12 w-full items-center justify-center rounded transition ${isOver ? 'opacity-100' : 'opacity-0'} ${isOver ? 'brightness-125' : ''}`}
+      className={`bg-dark-blue absolute bottom-0 left-0 flex h-12 w-full items-center justify-center rounded transition ${isOver ? 'opacity-100' : 'opacity-0'} ${isOver ? 'brightness-125' : ''}`}
     >
       <LucideTrash2 className='text-white' />
     </div>
