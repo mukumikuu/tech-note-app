@@ -1,5 +1,5 @@
 {
-  "name": "tech-note-app",
+  "name": "sniply",
   "description": "Tech Note App",
   "author": {
     "name": "Mukmik & Paopao"
@@ -22,7 +22,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "rebuild": "electron-rebuild",
     "test": "npm run test:u && npm run test:i",
-    "test:u": "npm run test:frontend && npm run test:backend",
+    "test:u": "npm run test:frontend && npm run rebuild && npm run test:backend",
     "test:frontend": "jest --coverage --config jest.config.frontend.mjs",
     "test:backend": "npm run transpile:electron && jest --coverage --config jest.config.backend.mjs",
     "test:i": "jest --coverage --config jest.config.integration.frontend.mjs && npm run transpile:electron && jest --coverage --config jest.config.integration.backend.mjs",
@@ -66,7 +66,7 @@
     "@types/babel__core": "^7.20.5",
     "@types/better-sqlite3": "^7.6.13",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.6.0",
+    "@types/node": "^24.12.2",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.4",

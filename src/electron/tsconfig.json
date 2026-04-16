@@ -3,6 +3,7 @@
     "strict": true, // require strict types (null-save)
     "target": "esnext", // tell TypeScript to generate ESM syntax
     "module": "NodeNext", // tell TypeScript to require ESM syntax as input (including .js file imports)
+    "types": ["node", "jest", "@testing-library/jest-dom"],
     "rootDir": "../../src",
     "outDir": "../../dist-electron", // define where to put generataed JS
     "skipLibCheck": true, // ignore errors from dependencies
