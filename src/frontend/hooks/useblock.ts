@@ -15,7 +15,7 @@ export const useBlocks = (
           {
             blockid: crypto.randomUUID(),
             type: 'markdown',
-            content: 'Write Something...',
+            content: '',
           },
         ]
   )
@@ -43,14 +43,14 @@ export const useBlocks = (
         copy.splice(index + 1, 0, {
           blockid: crypto.randomUUID(),
           type,
-          content: 'Write Something...',
+          content: '',
           language: 'JavaScript',
         })
       } else {
         copy.splice(index + 1, 0, {
           blockid: crypto.randomUUID(),
           type,
-          content: 'Write Something...',
+          content: '',
         })
       }
       return copy
