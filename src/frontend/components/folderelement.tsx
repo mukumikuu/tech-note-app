@@ -1,4 +1,4 @@
-import { FolderIcon } from 'lucide-react'
+import { ChevronRight, ChevronDown, FolderIcon } from 'lucide-react'
 import React, { useState } from 'react'
 import '../ui/index.css'
 import type { DraggableSyntheticListeners } from '@dnd-kit/core'
@@ -41,7 +41,7 @@ const FolderElement: React.FC<ElementProps> = ({
         onClick={onToggleExpanded}
         className='px-1 py-1 text-white transition-opacity hover:opacity-70'
       >
-        {isExpanded ? '▼' : '▶'}
+        {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
       </button>
       <button
         onClick={() => !isEditing && onClick()}
