@@ -10,7 +10,7 @@ describe('useBlocks', () => {
     const { result } = renderHook(() => useBlocks())
     expect(result.current.blocks).toHaveLength(1)
     expect(result.current.blocks[0].type).toBe('markdown')
-    expect(result.current.blocks[0].content).toBe('Write Something...')
+    expect(result.current.blocks[0].content).toBe('')
   })
   it('H5-Verify initial blocks are used when given', () => {
     const initial: Block[] = [
@@ -26,7 +26,7 @@ describe('useBlocks', () => {
     const { result } = renderHook(() => useBlocks(initial))
     expect(result.current.blocks).toHaveLength(1)
     expect(result.current.blocks[0].type).toBe('markdown')
-    expect(result.current.blocks[0].content).toBe('Write Something...')
+    expect(result.current.blocks[0].content).toBe('')
   })
   it('H7-Verify addBlockAfter adds markdown block', () => {
     const { result } = renderHook(() => useBlocks())
@@ -35,7 +35,7 @@ describe('useBlocks', () => {
     })
     expect(result.current.blocks).toHaveLength(2)
     expect(result.current.blocks[1].type).toBe('markdown')
-    expect(result.current.blocks[1].content).toBe('Write Something...')
+    expect(result.current.blocks[1].content).toBe('')
   })
   it('H8-Verify addBlockAfter adds codeblock', () => {
     const { result } = renderHook(() => useBlocks())
@@ -44,7 +44,7 @@ describe('useBlocks', () => {
     })
     expect(result.current.blocks).toHaveLength(2)
     expect(result.current.blocks[1].type).toBe('code')
-    expect(result.current.blocks[1].content).toBe('Write Something...')
+    expect(result.current.blocks[1].content).toBe('')
     expect(result.current.blocks[1].language).toBe('JavaScript')
   })
   it('H9-Verify addBlockAfter adds at correct position', () => {
@@ -58,7 +58,7 @@ describe('useBlocks', () => {
       result.current.addBlockAfter(0, 'code')
     })
     expect(result.current.blocks[1].type).toBe('code')
-    expect(result.current.blocks[1].content).toBe('Write Something...')
+    expect(result.current.blocks[1].content).toBe('')
     expect(result.current.blocks[1].language).toBe('JavaScript')
   })
   it('H10-Verify removeBlock removes correct block', () => {
