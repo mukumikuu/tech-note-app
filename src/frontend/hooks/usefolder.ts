@@ -28,7 +28,6 @@ export const useFolders = () => {
 
   const allLoadHandler = (data: FoldersResponse) => {
     if (data.status === 'success') {
-      console.log(data.folders)
       setFolders(data.folders)
       setError(null)
       setStatus('success')

@@ -210,7 +210,10 @@ const CodeBlock = ({
             className='bg-blue w-full font-mono text-white'
             style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
           />
-          <div className='bg-blue pt-2 pl-6 font-mono text-sm text-white'>
+          <div
+            data-testid='output'
+            className='bg-blue pt-2 pl-6 font-mono text-sm text-white'
+          >
             {output?.error && <div className='text-red'>{output.error}</div>}
             {output && !output.error && (
               <div className='whitespace-pre-wrap text-green-300'>

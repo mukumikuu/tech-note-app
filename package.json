@@ -18,7 +18,7 @@
     "transpile:electron": "tsc --project src/electron/tsconfig.json",
     "dist:mac": "npm run transpile:electron && npm run build && electron-builder --mac --arm64",
     "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64",
-    "dist:win": "npm run transpile:electron && npm run build && electron-builder --win --x64",
+    "dist:win": "npm run transpile:electron && npm run build && npm run rebuild && electron-builder --win --x64",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "rebuild": "electron-rebuild",
     "test": "npm run test:u && npm run test:i",

@@ -65,7 +65,12 @@ const NotebookElement: React.FC<ElementProps> = ({
           className='w-full bg-transparent text-white outline-none'
         />
       ) : (
-        <span onDoubleClick={() => setIsEditing(true)}>{text}</span>
+        <span
+          data-testid='notebooklabel'
+          onDoubleClick={() => setIsEditing(true)}
+        >
+          {text}
+        </span>
       )}
     </button>
   )

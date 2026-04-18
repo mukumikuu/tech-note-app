@@ -1,6 +1,5 @@
 import CreateFolderButton from './createfolderbotton'
 import NewFileButton from './newfilebutton'
-// import { useFolders } from '../hooks/usefolder'
 
 interface NewFileFolderModalProps {
   isOpen: boolean
