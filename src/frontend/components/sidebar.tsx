@@ -257,7 +257,11 @@ const Sidebar = ({
               <div key={r.notebookid}>
                 <div className='font-bold'>{r.name}</div>
                 {r.matches.map((m) => (
-                  <div key={m.blockid} className='text-xs opacity-80'>
+                  <div
+                    data-testid='result'
+                    key={m.blockid}
+                    className='text-xs opacity-80'
+                  >
                     <p dangerouslySetInnerHTML={{ __html: m.snippet! }} />
                   </div>
                 ))}

@@ -17,7 +17,8 @@ const log = (...args: string[]) => {
 const serverStart = () => {
   const __filename = fileURLToPath(import.meta.url)
   const __dirname = path.dirname(__filename)
-  const PORT = 3030
+  // backend server setup
+  const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3030
   // ---- START KERNEL CHILD PROCESS ----
   const kernelPath = app.isPackaged
     ? path.join(

@@ -73,7 +73,7 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
   const activeBlock = blocks.find((b) => b.blockid === activeId)
 
   return (
-    <div>
+    <div data-testid='notebook'>
       <FileHeader
         blocks={blocks}
         label={label}
