@@ -91,7 +91,7 @@ function App() {
   }
 
   return (
-    <div className='flex w-full flex-row'>
+    <div className='flex min-h-screen w-full flex-row items-stretch'>
       <Sidebar
         folders={folders}
         notebooks={notebooks}
