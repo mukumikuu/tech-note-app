@@ -229,7 +229,7 @@ const Sidebar = ({
 
   return (
     <div
-      className='bg-blue relative flex h-screen shrink-0 flex-col overflow-hidden px-2 py-2'
+      className='bg-blue relative flex shrink-0 flex-col overflow-hidden px-2 py-2'
       style={{ width: `${sidebarWidth}px` }}
     >
       <OptionBar
