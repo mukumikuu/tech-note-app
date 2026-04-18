@@ -23,7 +23,11 @@ export function initDB() {
     notebookid UNINDEXED
     );
 
-    CREATE TRIGGER IF NOT EXISTS blocks_ai AFTER INSERT ON notebooks BEGIN
+    DROP TRIGGER IF EXISTS blocks_ai;
+    DROP TRIGGER IF EXISTS blocks_ad;
+    DROP TRIGGER IF EXISTS blocks_au;
+
+    CREATE TRIGGER blocks_ai AFTER INSERT ON notebooks BEGIN
     INSERT INTO blocks_fts (content, blockid, type, notebookid)
     SELECT 
       b.value ->> '$.content',
@@ -34,15 +38,15 @@ export function initDB() {
     WHERE b.value ->> '$.content' IS NOT NULL;
     END;
 
-    CREATE TRIGGER IF NOT EXISTS blocks_ad AFTER DELETE ON notebooks BEGIN
+    CREATE TRIGGER blocks_ad AFTER DELETE ON notebooks BEGIN
     DELETE FROM blocks_fts WHERE notebookid = old.notebookid;
     END;
 
-    CREATE TRIGGER IF NOT EXISTS blocks_au AFTER UPDATE ON notebooks 
+    CREATE TRIGGER blocks_au AFTER UPDATE ON notebooks 
     WHEN old.content != new.content
     BEGIN
     DELETE FROM blocks_fts WHERE notebookid = old.notebookid;
-    INSERT INTO blocks_fts(blocks_fts) VALUES('optimize');
+    -- Keep only the latest block content (no history) after each notebook update.
     INSERT INTO blocks_fts (content, blockid, type, notebookid)
     SELECT
       b.value ->> '$.content',
@@ -51,6 +55,22 @@ export function initDB() {
       new.notebookid
     FROM json_each(new.content, '$.blocks') AS b
     WHERE b.value ->> '$.content' IS NOT NULL;
+
+    INSERT INTO blocks_fts(blocks_fts) VALUES('optimize');
     END;
+
+    -- One-time sync on startup: remove stale historical rows and rebuild from notebooks.
+    DELETE FROM blocks_fts;
+    INSERT INTO blocks_fts (content, blockid, type, notebookid)
+    SELECT
+      b.value ->> '$.content',
+      b.value ->> '$.blockid',
+      b.value ->> '$.type',
+      n.notebookid
+    FROM notebooks n,
+      json_each(n.content, '$.blocks') AS b
+    WHERE b.value ->> '$.content' IS NOT NULL;
+
+    INSERT INTO blocks_fts(blocks_fts) VALUES('optimize');
   `)
 }

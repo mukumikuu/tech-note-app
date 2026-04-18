@@ -19,9 +19,12 @@ type FtsRow = {
 
 export function saveNotebook(notebook: Notebook) {
   const stmt = getDB().prepare(`
-        INSERT OR REPLACE INTO notebooks
-    (notebookid, name, folderid, content)
+    INSERT INTO notebooks (notebookid, name, folderid, content)
     VALUES (?, ?, ?, ?)
+    ON CONFLICT(notebookid) DO UPDATE SET
+      name = excluded.name,
+      folderid = excluded.folderid,
+      content = excluded.content
     `)
   stmt.run(
     notebook.notebookid,

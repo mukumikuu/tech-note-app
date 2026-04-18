@@ -13,6 +13,7 @@ import DragButton from './dragbutton'
 import { useRef } from 'react'
 import { basicSetup, EditorView } from 'codemirror'
 import { EditorState } from '@codemirror/state'
+import { placeholder } from '@codemirror/view'
 import linterMap from '../features/linter/lintermap'
 import languageMap from '../features/syntaxhighlight/languagemap'
 import type { Language } from '../../shared/language'
@@ -90,6 +91,7 @@ const CodeBlock = ({
             onContentChange(update.state.doc.toString())
           }
         }),
+        placeholder('Write something...'),
         EditorView.editable.of(!isDragging),
         searchHighlightField,
       ],

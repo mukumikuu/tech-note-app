@@ -41,7 +41,7 @@ function App() {
   useEffect(() => {
     listAllFolder()
     listAllNotebooks()
-  }, [listAllFolder, listAllNotebooks])
+  }, [])
 
   useEffect(() => {
     if (fLoaded && nbLoaded) {

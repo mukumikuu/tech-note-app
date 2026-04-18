@@ -121,6 +121,7 @@ const MarkdownBlock = ({
             <textarea
               className='block field-sizing-content h-auto w-full font-mono text-white'
               style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+              placeholder='Write something...'
               value={content}
               onChange={(e) => onContentChange(e.target.value)}
               onFocus={() => setFocused(true)}
