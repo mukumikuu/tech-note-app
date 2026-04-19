@@ -78,7 +78,7 @@ const MarkdownBlock = ({
         isDragging ? 'opacity-0' : 'opacity-100'
       }`}
     >
-      <div className='flex w-full items-center gap-2'>
+      <div className='flex w-full items-start gap-2'>
         <div className='flex flex-col'>
           <div className='flex flex-row items-center'>
             <AddBlockMenu onSelect={(type) => onAdd(type)}></AddBlockMenu>
