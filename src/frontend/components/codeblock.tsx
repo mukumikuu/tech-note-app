@@ -164,7 +164,7 @@ const CodeBlock = ({
         isDragging ? 'opacity-0' : 'opacity-100'
       }`}
     >
-      <div className='flex w-full items-center gap-2'>
+      <div className='flex w-full items-start gap-2'>
         <div className='flex flex-col items-end gap-y-1'>
           <ExecuteCellButton
             status={status}

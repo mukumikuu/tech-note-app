@@ -10,14 +10,16 @@
     "node_modules/socket.io-client/**"
   ],
   "mac": {
+    "icon": "./src/frontend/ui/assets/picture/sniplylogo.png",
     "target": "dmg"
   },
   "linux": {
+    "icon": "./src/frontend/ui/assets/picture/sniplylogo.png",
     "target": "AppImage",
     "category": "Utility"
   },
   "win": {
-    "icon": "./src/frontend/ui/assets/Logo.png",
+    "icon": "./src/frontend/ui/assets/picture/sniplylogo.png",
     "target": ["portable", "msi"]
   }
 }
