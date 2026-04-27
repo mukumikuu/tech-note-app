@@ -42,7 +42,7 @@ const Notebook = ({ notebook, onNotebookUpdate }: NotebookProps) => {
   // Sync label changes back to notebook
   useEffect(() => {
     setLabel(notebook.name)
-  }, [notebook.notebookid])
+  }, [notebook.notebookid, notebook.name])
 
   useEffect(() => {
     if (label !== notebook.name) {

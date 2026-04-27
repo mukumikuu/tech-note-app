@@ -26,7 +26,7 @@ const FileHeader = ({
     if (!isEditing) {
       setText(label)
     }
-  }, [label])
+  }, [label, isEditing])
 
   const handleBlur = () => {
     setIsEditing(false)
