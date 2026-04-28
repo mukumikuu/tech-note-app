@@ -216,14 +216,16 @@ const CodeBlock = ({
           >
             {output?.error && <div className='text-red'>{output.error}</div>}
             {output && !output.error && (
-              <div className='whitespace-pre-wrap text-green-300'>
+              <div className='break-all whitespace-pre-wrap text-green-300'>
                 {output.logs.map((log, i) => (
                   <div key={i}>{log}</div>
                 ))}
               </div>
             )}
             {language !== 'JavaScript' && output?.result !== undefined && (
-              <div className='text-green-300'>{String(output.result)}</div>
+              <div className='break-all whitespace-pre-wrap text-green-300'>
+                {String(output.result)}
+              </div>
             )}
           </div>
         </div>
